@@ -82,7 +82,7 @@ void button_test()
 {
 	std::cout << "\n************************************";
 	std::cout << "\n* BUTTON TEST, press ESC to exit";
-	std::cout << "\n************************************";
+	//std::cout << "\n************************************";
 
 	int val = 1;
 	int previous_val = 1;
