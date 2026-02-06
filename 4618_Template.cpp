@@ -23,6 +23,7 @@
 
 #include "Control.h"
 #include "Lab3Functions.h"
+#include "CSketch.h"
 
 // Must include Windows.h after Winsock2.h, so Serial must be included after Client/Server
 #include "Serial.h" 
@@ -370,6 +371,8 @@ void lab3()
 ////////////////////////////////////////////////////////////////
 void lab4()
 {
+   CSketch sketch;
+   sketch.run();
 }
 
 ////////////////////////////////////////////////////////////////

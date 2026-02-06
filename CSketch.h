@@ -9,8 +9,13 @@ class CSketch : public CBase4618
 
     public:
 
-       CSketch(char size, int comport);
+       CSketch();
 
-       ~CSketch();
+       CSketch(cv::Size size, int comport);
+
+       void CBase4618::gpio() override;
+       void CBase4618::update() override;
+       bool CBase4618::draw() override;
+
     };
 
