@@ -13,7 +13,7 @@ CSketch::CSketch(cv::Size canvas_size, int comport)
 
       cvui::init(CANVAS_NAME);
 
-      _canvas = cv::Mat::zeros(canvas_size, CV_8UC3);
+      _canvas = cv::Mat(canvas_size, CV_8UC3);
    }
 
 
@@ -37,10 +37,10 @@ bool CSketch::draw()
 
    _canvas.setTo(cv::Scalar(255, 255, 255));
 
-   if (cvui::button(_canvas, 80, 80, "Clear"))
-      {
-      _canvas.setTo(cv::Scalar(255, 255, 255));
-      }
+   //if (cvui::button(_canvas, 80, 80, "Clear"))
+   //   {
+   //   _canvas.setTo(cv::Scalar(255, 255, 255));
+   //   }
 
    if (cvui::button(_canvas, 10, 10, "Quit"))
       {

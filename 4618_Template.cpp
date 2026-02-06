@@ -372,6 +372,7 @@ void lab3()
 void lab4()
 {
    CSketch sketch;
+
    sketch.run();
 }
 

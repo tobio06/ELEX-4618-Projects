@@ -4,20 +4,27 @@
 
 #include "cvui.h"
 
+#define CANVAS_NAME "Etch-A-Sketch"
+
 CBase4618::CBase4618() { }
 
 CBase4618::~CBase4618() { }
 
 void CBase4618::run()
    {
-      while (!(_kbhit() && (_getch() == 'q' || _getch() == 'Q') ))
-         { 
-         
-            gpio();
-            update();
-            draw();
-            
-            if (!draw())
-               break;
-         }
+   cvui::init(CANVAS_NAME);
+
+   _canvas = cv::Mat(500, 500, CV_8UC3);
+
+   while (true)
+      {
+         update();
+         draw();
+
+         if (cv::waitKey(1) == 'q' || !draw())
+            {
+            break;
+            }
+      }
+
    }
