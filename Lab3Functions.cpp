@@ -71,9 +71,7 @@ void CLab3Functions::button_test()
 
 	while (!(_kbhit() && _getch() == ESC))
 	{
-
-      bool check_button = get_button(BUTTON2);
-		if (check_button == true)
+		if (get_button(BUTTON2))
 		{
 			count++;
 			std::cout << "\nBUTTON TEST: " << count;

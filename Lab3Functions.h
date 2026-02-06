@@ -11,8 +11,6 @@ private:
 
 public:
 
-	//void init();
-
 	void print_lab3_menu();
 
 	void analog_test();
