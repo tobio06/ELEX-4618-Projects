@@ -89,7 +89,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CBase4618.h" />
     <ClInclude Include="Control.h" />
+    <ClInclude Include="CSketch.h" />
     <ClInclude Include="cvui.h" />
     <ClInclude Include="Lab3Functions.h" />
     <ClInclude Include="Serial.h" />
@@ -98,7 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="4618_Template.cpp" />
+    <ClCompile Include="CBase4618.cpp" />
     <ClCompile Include="Control.cpp" />
+    <ClCompile Include="CSketch.cpp" />
     <ClCompile Include="Lab3Functions.cpp" />
     <ClCompile Include="Serial.cpp" />
     <ClCompile Include="server.cpp" />
