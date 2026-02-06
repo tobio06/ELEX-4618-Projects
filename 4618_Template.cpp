@@ -331,7 +331,7 @@ void lab3()
 {
     CLab3Functions control;
     char command = 0;
-    control.init_com(3);
+    control.init_com(4);
 
 	while (command != 'q' && command != 'Q')
 	{
