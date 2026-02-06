@@ -33,6 +33,9 @@ class CControl {
 private:
 	Serial _com; ///< Port control
 	int _previous_val = 1;
+	double _time_of_button_press = -1.0;
+	double _time_of_valid_debounce = -1.0;
+
 public:
 	CControl();
 	~CControl();

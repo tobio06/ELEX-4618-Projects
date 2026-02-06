@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-#define DEBOUNCE_TIME 0.05 // seconds
+#define DEBOUNCE_TIME 0.2 // seconds
 
 CControl::CControl() {}
 
@@ -113,22 +113,30 @@ float CControl::get_analog(int type, int channel, int& result)
 bool CControl::get_button(int channel)
 {
 	int val = 1;
-
-	double current_time = cv::getTickCount() / cv::getTickFrequency();
-
-	if (!get_data(DIGITAL, channel, val)) // if no button pressed return false
+	if (!get_data(DIGITAL, channel, val))
 		return false;
 
-	if (_previous_val == 1 && val == 0) // detects falling edge
-	{
-		double time_of_button_press = cv::getTickCount();
-		if ( current_time - time_of_button_press >= DEBOUNCE_TIME) // wait for debounce time
+	double now = cv::getTickCount() / cv::getTickFrequency();
+
+	if (val == 0)
 		{
-			int check_button;
-			get_data(DIGITAL, BUTTON2, check_button);
-			if (check_button == 0)
+		if (_time_of_button_press < 0.0) // first press
+			{
+			_time_of_button_press = now;
+			}
+      else // when button is being held
+			{
+			if ((now - _time_of_button_press >= DEBOUNCE_TIME) && (_time_of_valid_debounce < _time_of_button_press)) 
+				{
+				_time_of_valid_debounce = now;
 				return true;
+				}
+			}
 		}
-	}
-	_previous_val = val;
+	else
+		{
+		_time_of_button_press = -1.0;
+		}
+
+	return false;
 }

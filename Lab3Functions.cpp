@@ -3,13 +3,6 @@
 #include "Lab3Functions.h"
 #include <thread>
 
-//CControl control;
-
-//void CLab3Functions::init()
-//{
-//	init_com(4);
-//}
-
 void CLab3Functions::print_lab3_menu()
 {
 	std::cout << "\n**********************************************";
@@ -78,7 +71,9 @@ void CLab3Functions::button_test()
 
 	while (!(_kbhit() && _getch() == ESC))
 	{
-		if (get_button(BUTTON2))
+
+      bool check_button = get_button(BUTTON2);
+		if (check_button == true)
 		{
 			count++;
 			std::cout << "\nBUTTON TEST: " << count;
