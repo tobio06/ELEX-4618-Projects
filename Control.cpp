@@ -110,8 +110,25 @@ float CControl::get_analog(int type, int channel, int& result)
 }
 
 
-bool CControl::get_button(double press_time)
+bool CControl::get_button(int channel)
 {
-	while ( (cv::getTickCount() - press_time) / cv::getTickFrequency() < DEBOUNCE_TIME ) { }
-	return true;
+	int val = 1;
+
+	double current_time = cv::getTickCount() / cv::getTickFrequency();
+
+	if (!get_data(DIGITAL, channel, val)) // if no button pressed return false
+		return false;
+
+	if (_previous_val == 1 && val == 0) // detects falling edge
+	{
+		double time_of_button_press = cv::getTickCount();
+		if ( current_time - time_of_button_press >= DEBOUNCE_TIME) // wait for debounce time
+		{
+			int check_button;
+			get_data(DIGITAL, BUTTON2, check_button);
+			if (check_button == 0)
+				return true;
+		}
+	}
+	_previous_val = val;
 }

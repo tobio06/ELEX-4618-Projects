@@ -328,31 +328,32 @@ void lab2()
 
 void lab3()
 {
+    CLab3Functions control;
     char command = 0;
-    init();
+    control.init_com(4);
 
 	while (command != 'q' && command != 'Q')
 	{
-        print_lab3_menu();
+        control.print_lab3_menu();
         std::cin >> command;
 
 		switch (command)
 		{
         case 'a':
         case 'A':
-			analog_test();
+			control.analog_test();
 			break;
 		case 'd':
         case 'D':
-			digital_test();
+            control.digital_test();
 			break;
 		case 'b':
         case 'B':
-			button_test();
+            control.button_test();
 			break;
 		case 's':
         case 'S':
-			servo_test();
+            control.servo_test();
 			break;
         case 'q':
         case 'Q':

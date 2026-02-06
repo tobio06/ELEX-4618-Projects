@@ -6,14 +6,21 @@
 #include <sstream>
 #include <conio.h>
 
-void init();
+class CLab3Functions : public CControl {
+private:
 
-void print_lab3_menu();
+public:
 
-void analog_test();
+	//void init();
 
-void digital_test();
+	void print_lab3_menu();
 
-void button_test();
+	void analog_test();
 
-void servo_test();
+	void digital_test();
+
+	void button_test();
+
+	void servo_test();
+};
+

@@ -3,6 +3,15 @@
 #include "Serial.h"
 #include "opencv2/core.hpp"
 
+#define JOYSTICK_X 2 
+#define JOYSTICK_Y 26
+#define BUTTON2 32
+#define ESC 27
+#define BLUE_LED 37
+#define SERVO_CHANNEL 0
+#define SERVO_MAX 180
+#define SERVO_MIN 0
+
 enum _type
 {
 	DIGITAL,
@@ -23,6 +32,7 @@ enum _type
 class CControl {
 private:
 	Serial _com; ///< Port control
+	int _previous_val = 1;
 public:
 	CControl();
 	~CControl();
@@ -66,5 +76,5 @@ public:
 	* 
 	* @return True or false
 	*/
-	bool get_button(double press_time);
+	bool get_button(int channel);
 };
