@@ -5,15 +5,13 @@
 
 #define CANVAS_NAME "Etch-A-Sketch"
 
-CSketch::CSketch() { };
-
 CSketch::CSketch(cv::Size canvas_size, int comport)
    {
       _control.init_com(comport);
 
       cvui::init(CANVAS_NAME);
 
-      _canvas = cv::Mat(canvas_size, CV_8UC3);
+      _canvas = cv::Mat::zeros(canvas_size, CV_8UC3);
    }
 
 
@@ -28,21 +26,21 @@ void CSketch::gpio()
 
 void CSketch::update()
    {
-
+    _reset = _control.get_button(BUTTON1);
+    if (_reset)
+       {
+          _canvas.setTo(cv::Scalar(0, 0, 0));
+	}
    }
 
 
 bool CSketch::draw()
    {
+   cv::Point gui_position(10,10);
+   cvui::window(_canvas, gui_position.x, gui_position.y, 300, 200, "Etch-A-Sketch");
 
-   _canvas.setTo(cv::Scalar(255, 255, 255));
-
-   //if (cvui::button(_canvas, 80, 80, "Clear"))
-   //   {
-   //   _canvas.setTo(cv::Scalar(255, 255, 255));
-   //   }
-
-   if (cvui::button(_canvas, 10, 10, "Quit"))
+   gui_position += cv::Point(5, 25);
+   if (cvui::button(_canvas, gui_position.x, gui_position.y, 100, 50, "Quit"))
       {
       return false;
       }

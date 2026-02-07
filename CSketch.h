@@ -3,14 +3,13 @@
 #include "opencv2/core.hpp"
 #include "CBase4618.h"
 
+#define WINDOW_SIZE cv::Size(1000, 750)
+
 class CSketch : public CBase4618
     {
     private:
 
     public:
-
-       CSketch();
-
        CSketch(cv::Size size, int comport);
 
        void CBase4618::gpio() override;

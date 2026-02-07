@@ -7,6 +7,7 @@ class CBase4618
     protected:
       CControl _control;
       cv::Mat _canvas;
+      int _reset;
 
     public:
        CBase4618();

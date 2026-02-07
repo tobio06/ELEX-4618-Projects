@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-#define DEBOUNCE_TIME 0.2 // seconds
+#define DEBOUNCE_TIME 0.1 // seconds
 
 CControl::CControl() {}
 

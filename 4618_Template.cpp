@@ -371,7 +371,7 @@ void lab3()
 ////////////////////////////////////////////////////////////////
 void lab4()
 {
-   CSketch sketch;
+   CSketch sketch(WINDOW_SIZE, 4);
 
    sketch.run();
 }
