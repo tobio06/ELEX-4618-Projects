@@ -7,13 +7,12 @@ class CBase4618
     protected:
       CControl _control;
       cv::Mat _canvas;
-      int _reset;
 
     public:
        CBase4618();
        ~CBase4618();
 
-       virtual void gpio() = 0;
+       virtual double gpio(int type, int channel) = 0;
        virtual void update() = 0;
        virtual bool draw() = 0;
 

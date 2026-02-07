@@ -5,7 +5,7 @@
 
 #define JOYSTICK_X 2 
 #define JOYSTICK_Y 26
-#define BUTTON1 31
+#define BUTTON1 33
 #define BUTTON2 32
 #define ESC 27
 #define BLUE_LED 37

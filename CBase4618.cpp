@@ -14,12 +14,10 @@ void CBase4618::run()
    while (true)
       {
          update();
-         draw();
 
          if (cv::waitKey(1) == 'q' || !draw())
             {
             break;
             }
       }
-
    }
