@@ -42,29 +42,33 @@ void CSketch::update()
    {
     _reset = _control.get_button(BUTTON1);
 
-    _joystick_position = cv::Point(JOYSTICK_X_SCALER*gpio(ANALOG, JOYSTICK_X),
-                                   JOYSTICK_Y_SCALER*gpio(ANALOG, JOYSTICK_Y));
+    _joystick_position = cv::Point(JOYSTICK_X_SCALER * gpio(ANALOG, JOYSTICK_X) - 100,
+                                   JOYSTICK_Y_SCALER * ( 100 - gpio(ANALOG, JOYSTICK_Y) ) - 220);
 
     // keep the joystick position within the bounds of the canvas
-    if (_joystick_position.x < 0)
+    while (_joystick_position.x < 0 || _joystick_position.x > _canvas.cols - 2 ||
+           _joystick_position.y < 0 || _joystick_position.y > _canvas.rows - 2)
     {
-        _joystick_position.x = 0;
-    }
-    else if (_joystick_position.x > _canvas.cols - 5)
-    {
-        _joystick_position.x = _canvas.cols - 5;
-    }
-    else if (_joystick_position.y < 0)
-    {
-        _joystick_position.y = 0;
-    }
-    else if (_joystick_position.y > _canvas.rows - 5)
-    {
-        _joystick_position.y = _canvas.rows - 5;
+        if (_joystick_position.x < 0)
+        {
+            _joystick_position.x = 0;
+        }
+        else if (_joystick_position.x > _canvas.cols - 2)
+        {
+            _joystick_position.x = _canvas.cols - 2;
+        }
+        else if (_joystick_position.y < 0)
+        {
+            _joystick_position.y = 0;
+        }
+        else if (_joystick_position.y > _canvas.rows - 2)
+        {
+            _joystick_position.y = _canvas.rows - 2;
+        }
     }
 
     // translate the joystick position to an area to be coloured
-	_position_to_colour = cv::Rect(_joystick_position, cv::Size(5, 5));
+	_position_to_colour = cv::Rect(_joystick_position, cv::Size(2, 2));
 
 	// change colour if button 2 is pressed
 	if (_control.get_button(BUTTON2))
@@ -88,23 +92,35 @@ bool CSketch::draw()
     // quit button
     gui_position += cv::Point(5, 25);
     if (cvui::button(_canvas, gui_position.x, gui_position.y, 50, 20, "Quit"))
-        {
+    {
         return false;
-        }
+    }
 
     // clear button
     gui_position += cv::Point(0, 25);
     if (cvui::button(_canvas, gui_position.x, gui_position.y, 50, 25, "Clear"))
-        {
+    {
         _canvas.setTo(cv::Scalar(0, 0, 0));
-        }
+    }
 
     // colour display
 	gui_position += cv::Point(60, -5);
 	cv::putText(_canvas, "Colour: ", gui_position, cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar(255, 255, 255), 1);
 
+    // actual drawing
 	_canvas(_position_to_colour).setTo(_colours[_colour_index]);
 
+    // create smooth lines
+    if (smoothed)
+    {
+        cv::line(_canvas, _previous_joystick_position, _joystick_position, _colours[_colour_index], 2);
+        _previous_joystick_position = _joystick_position;
+    }
+    else
+    {
+        _previous_joystick_position = _joystick_position;
+        smoothed = true;
+    }
     cv::imshow(CANVAS_NAME, _canvas);
 
     return true;
