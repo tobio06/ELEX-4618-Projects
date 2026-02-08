@@ -13,9 +13,7 @@ void CBase4618::run()
    {
    while (true)
       {
-         update();
-
-         if (cv::waitKey(1) == 'q' || !draw())
+         if (cv::waitKey(1) == 'q' || !update() || !draw())
             {
             break;
             }

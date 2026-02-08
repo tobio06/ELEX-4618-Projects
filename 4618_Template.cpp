@@ -331,7 +331,7 @@ void lab3()
 {
     CLab3Functions control;
     char command = 0;
-    control.init_com(4);
+    control.init_com(3);
 
 	while (command != 'q' && command != 'Q')
 	{
@@ -371,7 +371,7 @@ void lab3()
 ////////////////////////////////////////////////////////////////
 void lab4()
 {
-   CSketch sketch(WINDOW_SIZE, 4);
+   CSketch sketch(WINDOW_SIZE, 3);
 
    sketch.run();
 }

@@ -2,10 +2,8 @@
 #include "stdafx.h"
 #include "Control.h"
 #include "Lab3Functions.h"
-#include <string>
-#include <sstream>
 
-#define DEBOUNCE_TIME 0.1 // seconds
+#define DEBOUNCE_TIME 0.05 // seconds
 
 CControl::CControl() {}
 
@@ -117,26 +115,49 @@ bool CControl::get_button(int channel)
 		return false;
 
 	double now = cv::getTickCount() / cv::getTickFrequency();
-
-	if (val == 0)
+	if (channel == BUTTON1)
 		{
-		if (_time_of_button_press < 0.0) // first press
+		if (val == 0)
 			{
-			_time_of_button_press = now;
-			}
-      else // when button is being held
-			{
-			if ((now - _time_of_button_press >= DEBOUNCE_TIME) && (_time_of_valid_debounce < _time_of_button_press)) 
+			if (_time_of_button1_press < 0.0) // first press
 				{
-				_time_of_valid_debounce = now;
-				return true;
+				_time_of_button1_press = now;
+				}
+			else // when button is being held
+				{
+				if ((now - _time_of_button1_press >= DEBOUNCE_TIME) && (_time_of_valid_button1_debounce < _time_of_button1_press))
+					{
+					_time_of_valid_button1_debounce = now;
+					return true;
+					}
 				}
 			}
+		else
+			{
+			_time_of_button1_press = -1.0;
+			}
 		}
-	else
+	else if (channel == BUTTON2)
 		{
-		_time_of_button_press = -1.0;
+		if (val == 0)
+			{
+			if (_time_of_button2_press < 0.0) // first press
+				{
+				_time_of_button2_press = now;
+				}
+			else // when button is being held
+				{
+				if ((now - _time_of_button2_press >= DEBOUNCE_TIME) && (_time_of_valid_button2_debounce < _time_of_button2_press))
+					{
+					_time_of_valid_button2_debounce = now;
+					return true;
+					}
+				}
+			}
+		else
+			{
+			_time_of_button2_press = -1.0;
+			}
 		}
-
 	return false;
 }
