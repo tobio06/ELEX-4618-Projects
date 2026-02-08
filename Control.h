@@ -9,6 +9,9 @@
 #define JOYSTICK_Y 26
 #define BUTTON1 33
 #define BUTTON2 32
+#define ACCELEROMETER_X 23
+#define ACCELEROMETER_Y 24
+#define ACCELEROMETER_Z 25
 #define ESC 27
 #define RED_LED 39
 #define GREEN_LED 38

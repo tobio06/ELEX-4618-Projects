@@ -9,13 +9,23 @@
 #define AMOUNT_OF_COLOURS 3
 
 #define WINDOW_SIZE cv::Size(1000, 750)
-#define JOYSTICK_X_SCALER 12.5
-#define JOYSTICK_Y_SCALER 12.5
+#define JOYSTICK_X_SCALER 12
+#define JOYSTICK_Y_SCALER 11.5
+
+#define ACCEL_SHAKE_THRESHOLD 2000
 
 class CSketch : public CBase4618
     {
     private:
        int _reset = 0; ///< Whether the canvas should be cleared
+
+       double _joystick_x_percent = 0; ///< Percentage of joystick deflection in the x direction
+       double _joystick_y_percent = 0; ///< Percentage of joystick deflection in the y direction
+       double _joystick_x_previous_percent = 0; ///< Previous percentage of joystick deflection in the x direction
+       double _joystick_y_previous_percent = 0; ///< Previous percentage of joystick deflection in the y direction
+       double _joystick_x_delta = 0; ///< Change in joystick position in the x direction
+       double _joystick_y_delta = 0; ///< Change in joystick position in the y direction
+
 		 cv::Point _joystick_position; ///< Position of the joystick
        cv::Point _previous_joystick_position; ///< Previous position of the joystick, used for smoothing lines
 
@@ -25,6 +35,12 @@ class CSketch : public CBase4618
 
        cv::Rect _position_to_colour; ///< Area to be coloured based on the joystick position, used for drawing
        bool _smoothed = false; ///< Whether to draw smooth lines 
+
+       int _accel_y = 0; ///< Current x acceleration, used for shake to reset
+       int _accel_z = 0; ///< Current y acceleration, used for shake to reset
+       int _previous_accel_y = 0; ///< Previous y acceleration, used for shake to reset
+       int _previous_accel_z = 0; ///< Previous z acceleration, used for shake to reset
+       bool _shake_reset_triggered = false; ///< Whether shake to reset has been triggered, used for shake to reset
 
     public:
        CSketch(cv::Size size, int comport);

@@ -51,8 +51,8 @@ bool CSketch::update()
 
     ///////////////////////////
     // read joystick position
-    _joystick_position = cv::Point(JOYSTICK_X_SCALER * gpio(ANALOG, JOYSTICK_X) - 100,
-                                   JOYSTICK_Y_SCALER * ( 100 - gpio(ANALOG, JOYSTICK_Y) ) - 220);
+    _joystick_position = cv::Point(JOYSTICK_X_SCALER * gpio(ANALOG, JOYSTICK_X) - 75,
+                                   JOYSTICK_Y_SCALER * ( 100 - gpio(ANALOG, JOYSTICK_Y) ) - 180);
 
     // keep the joystick position within the bounds of the canvas
     while (_joystick_position.x < 0 || _joystick_position.x > _canvas.cols - 2 ||
@@ -92,9 +92,7 @@ bool CSketch::update()
     // quit button
     gui_position += cv::Point(5, 25);
     if (cvui::button(_canvas, gui_position.x, gui_position.y, 50, 20, "Quit"))
-       {
        return false;
-       }
 
     // clear button
     gui_position += cv::Point(0, 25);
@@ -111,6 +109,27 @@ bool CSketch::update()
     _control.set_data(DIGITAL, RED_LED, _colour_index == 0);
     _control.set_data(DIGITAL, GREEN_LED, _colour_index == 1);
     _control.set_data(DIGITAL, BLUE_LED, _colour_index == 2);
+
+    ////////////////////
+    // shake to reset
+    _control.get_data(ANALOG, ACCELEROMETER_Y, _accel_y);
+    _control.get_data(ANALOG, ACCELEROMETER_Z, _accel_z);
+
+    if (!_shake_reset_triggered && (_accel_y - _previous_accel_y > ACCEL_SHAKE_THRESHOLD || _accel_z - _previous_accel_z > ACCEL_SHAKE_THRESHOLD))
+       {
+       _reset = true;
+       _shake_reset_triggered = true;  
+       }
+    else if (_shake_reset_triggered) // wait for shake to end before allowing another shake to reset
+       {
+       if ((_accel_y - _previous_accel_y < ACCEL_SHAKE_THRESHOLD && _accel_z - _previous_accel_z < ACCEL_SHAKE_THRESHOLD))
+         _shake_reset_triggered = false; 
+       }
+    else
+       {
+       _previous_accel_y = _accel_y;
+       _previous_accel_z = _accel_z;
+       }
 
     return true;
    }
