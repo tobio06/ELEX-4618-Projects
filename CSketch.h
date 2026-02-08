@@ -11,6 +11,9 @@
 #define WINDOW_SIZE cv::Size(1000, 750)
 #define JOYSTICK_X_SCALER 12
 #define JOYSTICK_Y_SCALER 11.5
+#define JOYSTICK_X_CENTER 47
+#define JOYSTICK_Y_CENTER 51
+#define JOYSTICK_DEADZONE 5
 
 #define ACCEL_SHAKE_THRESHOLD 2000
 
@@ -25,6 +28,8 @@ class CSketch : public CBase4618
        double _joystick_y_previous_percent = 0; ///< Previous percentage of joystick deflection in the y direction
        double _joystick_x_delta = 0; ///< Change in joystick position in the x direction
        double _joystick_y_delta = 0; ///< Change in joystick position in the y direction
+       double _position_x_incrementer = 0;
+       double _position_y_incrementer = 0;
 
 		 cv::Point _joystick_position; ///< Position of the joystick
        cv::Point _previous_joystick_position; ///< Previous position of the joystick, used for smoothing lines

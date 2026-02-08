@@ -49,10 +49,59 @@ bool CSketch::update()
    {
     _reset = _control.get_button(BUTTON1);
 
-    ///////////////////////////
-    // read joystick position
-    _joystick_position = cv::Point(JOYSTICK_X_SCALER * gpio(ANALOG, JOYSTICK_X) - 75,
-                                   JOYSTICK_Y_SCALER * ( 100 - gpio(ANALOG, JOYSTICK_Y) ) - 180);
+    _joystick_x_percent = gpio(ANALOG, JOYSTICK_X);
+    _joystick_y_percent = gpio(ANALOG, JOYSTICK_Y);
+
+    if (_joystick_x_percent > JOYSTICK_X_CENTER + JOYSTICK_DEADZONE)
+       if (_joystick_x_previous_percent > _joystick_x_percent)
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * _joystick_x_previous_percent - 75,
+                                         JOYSTICK_Y_SCALER * (100 - _joystick_y_previous_percent) - 180);
+       else
+          {
+          _position_x_incrementer++;
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * (_joystick_x_previous_percent + _position_x_incrementer) - 75,
+                                         JOYSTICK_Y_SCALER * (100 - (_joystick_y_previous_percent + _position_y_incrementer)) - 180);
+          }
+    else if (_joystick_x_percent < JOYSTICK_X_CENTER - JOYSTICK_DEADZONE)
+       if (_joystick_x_previous_percent < _joystick_x_percent)
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * _joystick_x_previous_percent - 75,
+                                         JOYSTICK_Y_SCALER * (100 - _joystick_y_previous_percent) - 180);
+       else
+          {
+          _position_x_incrementer--;
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * (_joystick_x_previous_percent + _position_x_incrementer) - 75,
+                                          JOYSTICK_Y_SCALER * (100 - (_joystick_y_previous_percent + _position_y_incrementer)) - 180);
+          }
+   
+       _position_x_incrementer = 0;
+       _joystick_x_previous_percent = _joystick_x_percent;
+    
+
+    if (_joystick_y_percent > JOYSTICK_Y_CENTER + JOYSTICK_DEADZONE)
+       if (_joystick_y_previous_percent > _joystick_y_percent)
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * _joystick_x_previous_percent - 75,
+                                         JOYSTICK_Y_SCALER * (100 - _joystick_y_previous_percent) - 180);
+       else
+          {
+          _position_y_incrementer++;
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * (_joystick_x_previous_percent + _position_x_incrementer) - 75,
+                                         JOYSTICK_Y_SCALER * (100 - (_joystick_y_previous_percent + _position_y_incrementer)) - 180);
+          }
+    else if (_joystick_y_percent < JOYSTICK_Y_CENTER - JOYSTICK_DEADZONE)
+       if (_joystick_y_previous_percent < _joystick_y_percent)
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * _joystick_x_previous_percent - 75,
+                                         JOYSTICK_Y_SCALER * (100 - _joystick_y_previous_percent) - 180);
+      else
+          {
+          _position_y_incrementer--;
+          _joystick_position = cv::Point(JOYSTICK_X_SCALER * (_joystick_x_previous_percent + _position_x_incrementer) - 75,
+                                         JOYSTICK_Y_SCALER * (100 - (_joystick_y_previous_percent + _position_y_incrementer)) - 180);
+          } 
+    
+       _position_y_incrementer = 0;
+       _joystick_y_previous_percent = _joystick_y_percent;
+    
+
 
     // keep the joystick position within the bounds of the canvas
     while (_joystick_position.x < 0 || _joystick_position.x > _canvas.cols - 2 ||
