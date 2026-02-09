@@ -24,21 +24,21 @@ class CSketch : public CBase4618
 
        double _joystick_x_percent = 0; ///< Percentage of joystick deflection in the x direction
        double _joystick_y_percent = 0; ///< Percentage of joystick deflection in the y direction
-       double _joystick_x_previous_percent = 0; ///< Previous percentage of joystick deflection in the x direction
-       double _joystick_y_previous_percent = 0; ///< Previous percentage of joystick deflection in the y direction
-       double _joystick_x_delta = 0; ///< Change in joystick position in the x direction
-       double _joystick_y_delta = 0; ///< Change in joystick position in the y direction
-       double _position_x_incrementer = 0;
-       double _position_y_incrementer = 0;
 
-		 cv::Point _joystick_position; ///< Position of the joystick
-       cv::Point _previous_joystick_position; ///< Previous position of the joystick, used for smoothing lines
+       double _x_incrementer = 0; ///< Increments or decrements the draw position in the x direction 
+       double _y_incrementer = 0; ///< Increments or decrements the draw position in the x direction
+
+       double _previous_x_draw_position = JOYSTICK_X_CENTER; ///< Previous x position that was drawn
+       double _previous_y_draw_position = JOYSTICK_Y_CENTER; ///< Previous y position that was 
+
+		 cv::Point _draw_position; ///< Position to draw 
+       cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
+       cv::Rect _position_to_colour; ///< Area to be coloured based on the draw position
 
        cv::Scalar _colours[3] = { RED, GREEN, BLUE }; ///< Colours to be used for drawing
        std::string _colour_names[3] = { "RED", "GREEN", "BLUE" }; ///< Names of the colours to be displayed in the GUI
        int _colour_index = 0; ///< Index of the current colour being used for drawing and changing LED colour with button 2
 
-       cv::Rect _position_to_colour; ///< Area to be coloured based on the joystick position, used for drawing
        bool _smoothed = false; ///< Whether to draw smooth lines 
 
        int _accel_y = 0; ///< Current x acceleration, used for shake to reset
