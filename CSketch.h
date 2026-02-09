@@ -3,20 +3,37 @@
 #include "opencv2/core.hpp"
 #include "CBase4618.h"
 
-#define RED cv::Scalar(0, 0, 255)
-#define GREEN cv::Scalar(0, 255, 0)
-#define BLUE cv::Scalar(255, 0, 0)
-#define AMOUNT_OF_COLOURS 3
+#define RED cv::Scalar(0, 0, 255) ///< Red colour 
+#define GREEN cv::Scalar(0, 255, 0) ///< Green colour 
+#define BLUE cv::Scalar(255, 0, 0) ///< Blue colour 
+#define YELLOW cv::Scalar(0, 255, 255) ///< Yellow colour 
+#define WHITE cv::Scalar(255, 255, 255) ///< White colour
+#define AMOUNT_OF_COLOURS 5 ///< Amount of colour supported for drawing and LED colour changing
 
-#define WINDOW_SIZE cv::Size(1000, 750)
-#define JOYSTICK_X_SCALER 12
-#define JOYSTICK_Y_SCALER 11.5
-#define JOYSTICK_X_CENTER 47
-#define JOYSTICK_Y_CENTER 51
-#define JOYSTICK_DEADZONE 5
+#define WINDOW_SIZE cv::Size(1000, 750) ///< Size of the canvas 
 
-#define ACCEL_SHAKE_THRESHOLD 2000
+#define JOYSTICK_X_SCALER 12 ///< Scaler for the joystick x input, used to translate the joystick position to a position on the canvas
+#define JOYSTICK_Y_SCALER 11.5 ///< Scaler for the joystick y input, used to translate the joystick position to a position on the canvas
+#define JOYSTICK_X_CENTER 47 ///< Center percentage value for the joystick x input
+#define JOYSTICK_Y_CENTER 51 ///< Center percentage value for the joystick y input
+#define JOYSTICK_DEADZONE 10 ///< Deadzone percentage for the joystick input, used to filter noise
 
+#define SPEED_THRESHOLD 85 ///< Threshold percentage for the joystick input, used to determine whether to use slow or fast speed scale for drawing
+#define SLOW_SPEED_SCALE 0.005 ///< Scale for slow speed drawing
+#define FAST_SPEED_SCALE 0.02 ///< Scale for fast speed drawing
+
+#define ACCEL_SHAKE_THRESHOLD 2000 ///< Threshold for the change in acceleration to trigger a shake to reset
+
+/**
+*
+* @brief Holds all code for the Etch-A-Sketch lab in ELEX 4618
+*
+* This class is meant to contain all defines, variables and function implementations
+* needed to create and run the Etch-A-Sketch lab for ELEX 4618.
+*
+* @author Tobio Yeung
+*
+*/
 class CSketch : public CBase4618
     {
     private:
@@ -35,8 +52,8 @@ class CSketch : public CBase4618
        cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
        cv::Rect _position_to_colour; ///< Area to be coloured based on the draw position
 
-       cv::Scalar _colours[3] = { RED, GREEN, BLUE }; ///< Colours to be used for drawing
-       std::string _colour_names[3] = { "RED", "GREEN", "BLUE" }; ///< Names of the colours to be displayed in the GUI
+       cv::Scalar _colours[5] = { RED, GREEN, BLUE, YELLOW, WHITE }; ///< Colours to be used for drawing
+       std::string _colour_names[5] = { "RED", "GREEN", "BLUE", "YELLOW", "WHITE"}; ///< Names of the colours to be displayed in the GUI
        int _colour_index = 0; ///< Index of the current colour being used for drawing and changing LED colour with button 2
 
        bool _smoothed = false; ///< Whether to draw smooth lines 

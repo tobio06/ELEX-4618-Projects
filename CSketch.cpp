@@ -52,26 +52,48 @@ bool CSketch::update()
     _joystick_x_percent = gpio(ANALOG, JOYSTICK_X);
     _joystick_y_percent = gpio(ANALOG, JOYSTICK_Y);
 
-    // x stuff
+    /////////////////////
+    // JOYSTICK CONTROL
+    // X AXIS
     if (_joystick_x_percent > JOYSTICK_X_CENTER + JOYSTICK_DEADZONE)
        {
-       _x_incrementer = _joystick_x_percent / 25;
+       if (_joystick_x_percent > SPEED_THRESHOLD)
+          {
+          _x_incrementer = _joystick_x_percent * FAST_SPEED_SCALE;
+          } 
+       else
+       _x_incrementer = _joystick_x_percent * SLOW_SPEED_SCALE;
        }
     else if (_joystick_x_percent < JOYSTICK_X_CENTER - JOYSTICK_DEADZONE)
        {
-       _x_incrementer = ( _joystick_x_percent - 100) / 25;
+       if (_joystick_x_percent < 100 - SPEED_THRESHOLD)
+          {
+          _x_incrementer = (_joystick_x_percent - 100) * FAST_SPEED_SCALE;
+          }
+       else
+       _x_incrementer = ( _joystick_x_percent - 100) * SLOW_SPEED_SCALE;
        }
     else 
        _x_incrementer = 0;
 
-    // y stuff
+    // Y AXIS
     if (_joystick_y_percent > JOYSTICK_Y_CENTER + JOYSTICK_DEADZONE)
        {
-       _y_incrementer = _joystick_y_percent / 10;
+       if (_joystick_y_percent > SPEED_THRESHOLD)
+          {
+          _y_incrementer = _joystick_y_percent * FAST_SPEED_SCALE;
+          }
+       else
+          _y_incrementer = _joystick_y_percent * SLOW_SPEED_SCALE;
        }
     else if (_joystick_y_percent < JOYSTICK_Y_CENTER - JOYSTICK_DEADZONE)
        {
-       _y_incrementer = ( _joystick_y_percent - 100) / 25;
+       if (_joystick_y_percent < 100 - SPEED_THRESHOLD)
+          {
+          _y_incrementer = (_joystick_y_percent - 100) * FAST_SPEED_SCALE;
+          }
+       else
+          _y_incrementer = (_joystick_y_percent - 100) * SLOW_SPEED_SCALE;
        }
     else
        _y_incrementer = 0;
@@ -134,9 +156,9 @@ bool CSketch::update()
     gui_position += cv::Point(0, 20);
     cv::putText(_canvas, _colour_names[_colour_index], gui_position, cv::FONT_HERSHEY_DUPLEX, 0.5, _colours[_colour_index], 1);
 
-    _control.set_data(DIGITAL, RED_LED, _colour_index == 0);
-    _control.set_data(DIGITAL, GREEN_LED, _colour_index == 1);
-    _control.set_data(DIGITAL, BLUE_LED, _colour_index == 2);
+    _control.set_data(DIGITAL, RED_LED, (_colour_index == 0 || _colour_index == 3 || _colour_index == 4) );
+    _control.set_data(DIGITAL, GREEN_LED, (_colour_index == 1 || _colour_index == 3 || _colour_index == 4) );
+    _control.set_data(DIGITAL, BLUE_LED, (_colour_index == 2 || _colour_index == 4 ) );
 
     ////////////////////
     // shake to reset
