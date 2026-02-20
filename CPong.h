@@ -2,6 +2,7 @@
 
 #include "opencv2/core.hpp"
 #include "CBase4618.h"
+#include <thread>
 
 #define CANVAS_NAME "Pong" ///< Name of the canvas and window for the Pong game
 #define PONG_WINDOW_SIZE cv::Size(1000, 800) ///< Size of the canvas 
@@ -18,6 +19,9 @@
 #define PADDLE_WIDTH 25 ///< Width of the paddle
 #define PADDLE_HEIGHT 150 ///< Height of the paddle
 #define ORIGINAL_BALL_RADIUS 50 ///< Original radius of the ball
+
+
+#define _30_FPS 1000 / 30 ///< Delay in milliseconds to achieve approximately 30 frames per second
 
 class CPong : public CBase4618
    {

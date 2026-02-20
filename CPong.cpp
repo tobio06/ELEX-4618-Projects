@@ -45,6 +45,8 @@ bool CPong::update()
    {
    _reset = _control.get_button(BUTTON1);
 
+   _frame_start = std::chrono::high_resolution_clock::now();
+
    _joystick_percent = gpio(ANALOG, JOYSTICK_Y);
 
    /////////////////////
@@ -108,15 +110,54 @@ bool CPong::draw()
    {
    if (_reset)
       {
-      _canvas.setTo(cv::Scalar(0, 0, 0));
+     
       _reset = false;
       }
+   
+   // reset every frame
+   _canvas.setTo(cv::Scalar(0, 0, 0));
 
-   cv::circle(_canvas, SCREEN_CENTER, ORIGINAL_BALL_RADIUS, cv::Scalar(255, 255, 255), -1);
+   //////////////////
+   // GUI ELEMENTS
+   // window
+   cv::Point gui_position(10, 10);
+   cvui::window(_canvas, gui_position.x, gui_position.y, 300, 200, "Pong");
+
+   // fps display
+   gui_position += cv::Point(5, 40);
+   cv::putText(_canvas, "FPS:", gui_position, cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255,255,255), 1);
+   gui_position += cv::Point(0, 20);
+   cv::putText(_canvas, _fps_string, gui_position, cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255, 255, 255), 1);
+   
+   // ball size trackbar
+   gui_position += cv::Point(0, 20);
+   cvui::trackbar(_canvas, gui_position.x, gui_position.y, 140, &_ball_radius, 5.0, 100.0);
+      
+   ////////////
+   // DRAWING
+   cv::circle(_canvas, SCREEN_CENTER, _ball_radius, cv::Scalar(255, 255, 255), -1);
+      
 
    cvui::update();
 
    cv::imshow(CANVAS_NAME, _canvas);
+
+   ///////////////////////////////////////
+   // FPS CALCULATION AND LOCK TO 30 FPS
+   auto frame_end = std::chrono::high_resolution_clock::now();
+
+   double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frame_end - _frame_start).count();
+
+   if (elapsed > 0)
+      _fps = 1000.0 / elapsed;
+      _fps_string = std::to_string(_fps);
+
+   // Lock to 30 FPS
+   int sleep_time = _30_FPS - elapsed;
+   if (sleep_time > 0)
+      {
+      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+      }
 
    return true;
    }
