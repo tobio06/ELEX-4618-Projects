@@ -208,6 +208,8 @@ bool CSketch::draw()
       _smoothed = true;
       }
 
+   cvui::update();
+
    cv::imshow(CANVAS_NAME, _canvas);
 
    return true;
