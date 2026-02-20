@@ -20,47 +20,46 @@
 #define ORIGINAL_BALL_RADIUS 50 ///< Original radius of the ball
 
 class CPong : public CBase4618
-    {
-    private:
-       int _reset = 0; ///< Whether the canvas should be cleared
+   {
+   private:
+      int _reset = 0; ///< Whether the canvas should be cleared
 
-       double _joystick_percent = 0; ///< Percentage of joystick deflection
-       double _y_incrementer = 0; ///< Increments or decrements the draw position in the x direction
+      double _joystick_percent = 0; ///< Percentage of joystick deflection
+      double _y_incrementer = 0; ///< Increments or decrements the draw position in the x direction
 
-       double _previous_y_draw_position = JOYSTICK_Y_CENTER; ///< Previous y position that was 
+      double _previous_y_draw_position = JOYSTICK_Y_CENTER; ///< Previous y position that was 
 
-       cv::Point _draw_position; ///< Position to draw 
-       cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
-       cv::Rect _position_to_colour; ///< Area to be coloured based on the draw posit
+      cv::Point _draw_position; ///< Position to draw 
+      cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
+      cv::Rect _position_to_colour; ///< Area to be coloured based on the draw posit
 
        cv::Rect _player_paddle = cv::Rect(); ///< Rectangle representing the player's paddle
        cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
        cv::Point _ball_position; ///< Position of the ball 
 
-    public:
-       CPong(cv::Size size, int comport);
-       ~CPong();
+   public:
+      CPong(cv::Size size, int comport);
+      ~CPong();
 
-       /** @brief Communicates with the embedded system to get the value of a digital or analog 
-       * 
-       * @param type The type of data to be set or received (Digital, Analog, or Servo)
-       * @param channel The channel to communicate with
-       *
-       * @return Value of the digital or analog input, or 0 if an invalid type is passed
-       */
-       double CBase4618::gpio(int type, int channel) override;
+      /** @brief Communicates with the embedded system to get the value of a digital or analog input
+      *
+      * @param type The type of data to be set or received (Digital, Analog, or Servo)
+      * @param channel The channel to communicate with
+      *
+      * @return Value of the digital or analog input, or 0 if an invalid type is passed
+      */
+      double CBase4618::gpio(int type, int channel) override;
 
-       /** @brief Updates the state of the program based on the state of the game and inputs from the microcontroller via gpio
-        *
-        * @return True or false
-        */
-       bool CBase4618::update() override;
-
-       /** @brief Performs all drawing functions onto the canvas and displays the canvas on the screen
+      /** @brief Updates the state of the program based on the state of the game and inputs from the microcontroller via gpio
        *
        * @return True or false
        */
-       bool CBase4618::draw() override;
+      bool CBase4618::update() override;
 
-    };
+      /** @brief Performs all drawing functions onto the canvas and displays the canvas on the screen
+      *
+      * @return True or false
+      */
+      bool CBase4618::draw() override;
+   };
 

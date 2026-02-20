@@ -2,6 +2,8 @@
 #include "opencv2/core.hpp"
 #include "Control.h"
 
+#define _30_FPS 33 ///< Delay in milliseconds to achieve approximately 30 frames per second
+
 /**
 *
 * @brief Holds common code for all labs in ELEX 4618
