@@ -3,7 +3,7 @@
 
 #include "cvui.h"
 
-CPong::CPong(cv::Size canvas_size, int comport) 
+CPong::CPong(cv::Size canvas_size, int comport)
    {
    _control.init_com(comport);
 
@@ -110,10 +110,10 @@ bool CPong::draw()
    {
    if (_reset)
       {
-     
+
       _reset = false;
       }
-   
+
    // reset every frame
    _canvas.setTo(cv::Scalar(0, 0, 0));
 
@@ -125,18 +125,18 @@ bool CPong::draw()
 
    // fps display
    gui_position += cv::Point(5, 40);
-   cv::putText(_canvas, "FPS:", gui_position, cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255,255,255), 1);
+   cv::putText(_canvas, "FPS:", gui_position, cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255, 255, 255), 1);
    gui_position += cv::Point(0, 20);
    cv::putText(_canvas, _fps_string, gui_position, cv::FONT_HERSHEY_DUPLEX, 0.5, cv::Scalar(255, 255, 255), 1);
-   
+
    // ball size trackbar
    gui_position += cv::Point(0, 20);
    cvui::trackbar(_canvas, gui_position.x, gui_position.y, 140, &_ball_radius, 5.0, 100.0);
-      
+
    ////////////
    // DRAWING
    cv::circle(_canvas, SCREEN_CENTER, _ball_radius, cv::Scalar(255, 255, 255), -1);
-      
+
 
    cvui::update();
 
@@ -150,7 +150,7 @@ bool CPong::draw()
 
    if (elapsed > 0)
       _fps = 1000.0 / elapsed;
-      _fps_string = std::to_string(_fps);
+   _fps_string = std::to_string(_fps);
 
    // Lock to 30 FPS
    int sleep_time = _30_FPS - elapsed;

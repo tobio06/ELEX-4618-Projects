@@ -37,9 +37,16 @@ class CPong : public CBase4618
       cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
       cv::Rect _position_to_colour; ///< Area to be coloured based on the draw posit
 
-       cv::Rect _player_paddle = cv::Rect(); ///< Rectangle representing the player's paddle
-       cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
-       cv::Point _ball_position; ///< Position of the ball 
+      cv::Rect _player_paddle = cv::Rect(); ///< Rectangle representing the player's paddle
+      cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
+
+      std::chrono::high_resolution_clock::time_point _frame_start; ///< Time point for the start of the frame, used for calculating elapsed time and FPS
+      double _fps = 0.0; ///< Frames per second
+      std::string _fps_string = ""; ///< String representation of the frames per second to be displayed in the GUI
+
+      double _ball_radius = 50; ///< Original radius of the ball
+      cv::Point _ball_velocity = cv::Point(5, 5); ///< Velocity of the ball in pixels per frame
+      cv::Point _ball_position = SCREEN_CENTER; ///< Position of the ball
 
    public:
       CPong(cv::Size size, int comport);
