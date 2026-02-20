@@ -35,3 +35,7 @@
 /build/
 
 *.bak
+/html/search
+/html
+/latex
+/Doxyfile
