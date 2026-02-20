@@ -21,7 +21,7 @@
 #define ORIGINAL_BALL_RADIUS 50 ///< Original radius of the ball
 
 
-#define _30_FPS 1000 / 30 ///< Delay in milliseconds to achieve approximately 30 frames per second
+#define _30_FPS_DELAY 1000 / 30 ///< Delay in milliseconds to achieve approximately 30 frames per second
 
 class CPong : public CBase4618
    {
@@ -45,8 +45,12 @@ class CPong : public CBase4618
       std::string _fps_string = ""; ///< String representation of the frames per second to be displayed in the GUI
 
       double _ball_radius = 50; ///< Original radius of the ball
-      cv::Point _ball_velocity = cv::Point(5, 5); ///< Velocity of the ball in pixels per frame
+      double _ball_speed = 250; ///< Speed of the ball in pixels per frame
+      cv::Point _ball_velocity = cv::Point(_ball_speed, _ball_speed); ///< Velocity of the ball in pixels per frame
       cv::Point _ball_position = SCREEN_CENTER; ///< Position of the ball
+
+      int64 _time_start_frame; ///< Time point for the start of the frame, used for calculating elapsed time and FPS
+      double _time_last_frame; ///< Time point for the last frame, used for calculating elapsed time and FPS
 
    public:
       CPong(cv::Size size, int comport);
