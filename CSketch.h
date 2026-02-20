@@ -10,7 +10,7 @@
 #define WHITE cv::Scalar(255, 255, 255) ///< White colour
 #define AMOUNT_OF_COLOURS 5 ///< Amount of colour supported for drawing and LED colour changing
 
-#define WINDOW_SIZE cv::Size(1000, 750) ///< Size of the canvas 
+#define ETCHASKETCH_WINDOW_SIZE cv::Size(1000, 750) ///< Size of the canvas 
 
 #define JOYSTICK_X_SCALER 12 ///< Scaler for the joystick x input, used to translate the joystick position to a position on the canvas
 #define JOYSTICK_Y_SCALER 11.5 ///< Scaler for the joystick y input, used to translate the joystick position to a position on the canvas

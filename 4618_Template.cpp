@@ -24,6 +24,7 @@
 #include "Control.h"
 #include "Lab3Functions.h"
 #include "CSketch.h"
+#include "CPong.h"
 
 // Must include Windows.h after Winsock2.h, so Serial must be included after Client/Server
 #include "Serial.h" 
@@ -371,7 +372,7 @@ void lab3()
 ////////////////////////////////////////////////////////////////
 void lab4()
 {
-   CSketch sketch(WINDOW_SIZE, 3);
+   CSketch sketch(ETCHASKETCH_WINDOW_SIZE, 3);
 
    sketch.run();
 }
@@ -381,6 +382,9 @@ void lab4()
 ////////////////////////////////////////////////////////////////
 void lab5()
 {
+   CPong pong(PONG_WINDOW_SIZE, 3);
+
+   pong.run();
 }
 
 ////////////////////////////////////////////////////////////////
