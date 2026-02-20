@@ -13,8 +13,8 @@
 #define JOYSTICK_DEADZONE 10 ///< Deadzone percentage for the joystick input, used to filter noise
 
 #define SPEED_THRESHOLD 85 ///< Threshold percentage for the joystick input, used to determine whether to use slow or fast speed scale 
-#define SLOW_SPEED_SCALE 0.005 ///< Scale for slow speed 
-#define FAST_SPEED_SCALE 0.02 ///< Scale for fast speed
+#define SLOW_SPEED_SCALE 0.05 ///< Scale for slow speed 
+#define FAST_SPEED_SCALE 0.2 ///< Scale for fast speed
 
 #define PADDLE_WIDTH 25 ///< Width of the paddle
 #define PADDLE_HEIGHT 150 ///< Height of the paddle
@@ -27,20 +27,18 @@ class CPong : public CBase4618
    {
    private:
       int _reset = 0; ///< Whether the canvas should be cleared
+      int _game_over = 0; ///< Whether the game is over and should be reset
 
       double _joystick_percent = 0; ///< Percentage of joystick deflection
       double _y_incrementer = 0; ///< Increments or decrements the draw position in the x direction
 
-      double _previous_y_draw_position = JOYSTICK_Y_CENTER; ///< Previous y position that was 
-
-      cv::Point _draw_position; ///< Position to draw 
-      cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
-      cv::Rect _position_to_colour; ///< Area to be coloured based on the draw posit
+      double _paddle_position; ///< Position of paddle 
+      double _previous_paddle_position = PONG_WINDOW_SIZE.height / 2; ///< Previous position of paddle
 
       cv::Rect _player_paddle = cv::Rect(); ///< Rectangle representing the player's paddle
       cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
+      cv::Rect _ball_hitbox = cv::Rect(); ///< Rectangle representing the hitbox of the ball, used for collision detection with paddles
 
-      std::chrono::high_resolution_clock::time_point _frame_start; ///< Time point for the start of the frame, used for calculating elapsed time and FPS
       double _fps = 0.0; ///< Frames per second
       std::string _fps_string = ""; ///< String representation of the frames per second to be displayed in the GUI
 
@@ -51,6 +49,9 @@ class CPong : public CBase4618
 
       int64 _time_start_frame; ///< Time point for the start of the frame, used for calculating elapsed time and FPS
       double _time_last_frame; ///< Time point for the last frame, used for calculating elapsed time and FPS
+
+      int _player_score = 0; ///< Player's score
+      int _computer_score = 0; ///< Computer's score
 
    public:
       CPong(cv::Size size, int comport);

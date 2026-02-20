@@ -54,6 +54,12 @@ bool CPong::update()
    // control reset with button 1
    _reset = _control.get_button(BUTTON1);
 
+   // check if any score is 5 or above to end game
+   if (_player_score >= 5 || _computer_score >= 5)
+      {
+      _game_over = true;
+      }
+
    // get joystick position as a percentage
    _joystick_percent = gpio(ANALOG, JOYSTICK_Y);
 
@@ -80,56 +86,51 @@ bool CPong::update()
    else
       _y_incrementer = 0;
 
-   //_draw_position = cv::Point(JOYSTICK_X_SCALER * (_previous_x_draw_position + _x_incrementer) - 75,
-   //   JOYSTICK_Y_SCALER * (100 - (_previous_y_draw_position + _y_incrementer)) - 180);
+   //////////////////
+   // PADDLE CONTROL
 
-   _previous_y_draw_position += _y_incrementer;
+   _paddle_position = PONG_WINDOW_SIZE.height - (_previous_paddle_position + _y_incrementer);
+   _previous_paddle_position += _y_incrementer;
 
-   // keep the draw position within the bounds of the canvas
-   while (_draw_position.x < 0 || _draw_position.x > _canvas.cols - 2 ||
-      _draw_position.y < 0 || _draw_position.y > _canvas.rows - 2)
+   _player_paddle = cv::Rect(_canvas.cols - PADDLE_WIDTH, _paddle_position - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT);
+   _computer_paddle = cv::Rect(0, _ball_position.y - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT);
+
+   // constrain player paddle to stay on the screen; loops around if it goes off one side
+   if (_player_paddle.y < 0)
       {
-      if (_draw_position.x < 0)
-         {
-         _draw_position.x = 0;
-         }
-      else if (_draw_position.x > _canvas.cols - 2)
-         {
-         _draw_position.x = _canvas.cols - 2;
-         }
-      else if (_draw_position.y < 0)
-         {
-         _draw_position.y = 0;
-         }
-      else if (_draw_position.y > _canvas.rows - 2)
-         {
-         _draw_position.y = _canvas.rows - 2;
-         }
+      _player_paddle.y = 0;
+      _previous_paddle_position = PADDLE_HEIGHT / 2;
+      }
+   else if (_player_paddle.y + _player_paddle.height > _canvas.rows)
+      {
+      _player_paddle.y = _canvas.rows - _player_paddle.height;
+      _previous_paddle_position = _canvas.rows - PADDLE_HEIGHT / 2;
       }
 
-   // translate the joystick position to an area to be coloured
-   _position_to_colour = cv::Rect(_draw_position, cv::Size(2, 2));
-
-   //////////////////////////////////////
-   // UPDATE BALL POSITION AND VELOCITY
+   /////////////////////////////////////////////////
+   // UPDATE BALL POSITION, VELOCITY, AND COLLISION
    double ball_velocity_magnitude = sqrt(pow(_ball_velocity.x, 2) + pow(_ball_velocity.y, 2));
 
    // scale ball velocity with speed while maintaining direction
    if (ball_velocity_magnitude != 0)
    _ball_velocity = cv::Point( (_ball_velocity.x / ball_velocity_magnitude) * _ball_speed, (_ball_velocity.y / ball_velocity_magnitude) * _ball_speed);
 
+   // update ball position with velocity
    _ball_position += _ball_velocity * dt;
 
-   // X wall bounce
+   // implement ball hitbox for collision detection with paddles
+   _ball_hitbox = cv::Rect(_ball_position.x - _ball_radius, _ball_position.y - _ball_radius, _ball_radius * 2, _ball_radius * 2);
+
+   // X wall register
    if (_ball_position.x - _ball_radius < 0)
       {
-      _ball_position.x = _ball_radius;
-      _ball_velocity.x = -_ball_velocity.x;
+      _player_score++;
+      _ball_position = SCREEN_CENTER;
       }
    else if (_ball_position.x + _ball_radius > _canvas.cols)
       {
-      _ball_position.x = _canvas.cols - _ball_radius;
-      _ball_velocity.x = -_ball_velocity.x;
+      _computer_score++;
+      _ball_position = SCREEN_CENTER;
       }
 
    // Y wall bounce
@@ -142,6 +143,20 @@ bool CPong::update()
       {
       _ball_position.y = _canvas.rows - _ball_radius;
       _ball_velocity.y = -_ball_velocity.y;
+      }
+
+   // computer paddle bounce
+   if ( (_ball_hitbox & _computer_paddle).area() && _ball_velocity.x < 0 )
+      {
+      _ball_position.x = _computer_paddle.x + _computer_paddle.width + _ball_radius;
+      _ball_velocity.x = -_ball_velocity.x;
+      }
+
+   // player paddle bounce
+   if ( (_ball_hitbox & _player_paddle).area() && _ball_velocity.x > 0 )
+      {
+      _ball_position.x = _player_paddle.x - _ball_radius;
+      _ball_velocity.x = -_ball_velocity.x;
       }
 
    ///////////////////////////////////////////
@@ -169,29 +184,36 @@ bool CPong::update()
 
 bool CPong::draw()
    {
-   if (_reset)
+   if (_reset == true)
       {
-
       _reset = false;
+      _game_over = false;
+      _ball_position = SCREEN_CENTER;
+      _ball_speed = 250;
+      _ball_velocity = cv::Point(_ball_speed, _ball_speed);
+      _ball_radius = ORIGINAL_BALL_RADIUS;
+      _player_score = 0;
+      _computer_score = 0;
       }
-
    // reset every frame
    _canvas.setTo(cv::Scalar(0, 0, 0));
 
    //////////////////
    // GUI ELEMENTS
    // window
-   cv::Point gui_position(10, 10);
+   cv::Point gui_position(50, 10);
    cvui::window(_canvas, gui_position.x, gui_position.y, 250, 250, " ");
 
    // fps display
    gui_position += cv::Point(10, 5);
-   cvui::text(_canvas, gui_position.x, gui_position.y, "Pong (FPS: ");
-   gui_position += cv::Point(80, 0);
-   cvui::text(_canvas, gui_position.x, gui_position.y, _fps_string + ")");
+   cvui::text(_canvas, gui_position.x, gui_position.y, "Pong (FPS: " + _fps_string + ")");
+
+   // score display
+   gui_position += cv::Point(0, 30);
+   cvui::text(_canvas, gui_position.x, gui_position.y, "SCORE: " + std::to_string(_computer_score) + " - " + std::to_string(_player_score), 1);
 
    // ball size trackbar
-   gui_position += cv::Point(10, 30);
+   gui_position += cv::Point(90, 40);
    cvui::text(_canvas, gui_position.x, gui_position.y, "Radius");
    gui_position += cv::Point(-80, 5);
    cvui::trackbar(_canvas, gui_position.x, gui_position.y, 200, &_ball_radius, 5.0, 100.0 );
@@ -202,16 +224,50 @@ bool CPong::draw()
    gui_position += cv::Point(-80, 5);
    cvui::trackbar(_canvas, gui_position.x, gui_position.y, 200, &_ball_speed, 100.0, 400.0);
 
+   // quit button
+   gui_position += cv::Point(25, 60);
+   if (cvui::button(_canvas, gui_position.x, gui_position.y, 50, 25, "Quit"))
+      return false;
+
+   // reset button
+   gui_position += cv::Point(100, 0);
+   if (cvui::button(_canvas, gui_position.x, gui_position.y, 50, 25, "Reset"))
+      {
+      _game_over = false;
+      _ball_position = SCREEN_CENTER;
+      _ball_speed = 250;
+      _ball_velocity = cv::Point(_ball_speed, _ball_speed);
+      _ball_radius = ORIGINAL_BALL_RADIUS;
+      _player_score = 0;
+      _computer_score = 0;
+      }
+
+   // end screen
+   if (_game_over)
+      {
+      cv::putText(_canvas, "GAME OVER", cv::Point(_canvas.cols / 2 - 350, 200), cv::FONT_HERSHEY_DUPLEX, 4, cv::Scalar(0, 0, 200), 11);
+      _ball_position = SCREEN_CENTER;
+      _ball_speed = 0;
+      _ball_radius = ORIGINAL_BALL_RADIUS;
+      _player_score = 0;
+      _computer_score = 0;
+      }
+
    ////////////
    // DRAWING
+   // pong ball
    cv::circle(_canvas, _ball_position, _ball_radius, cv::Scalar(255, 255, 255), -1);
 
+   // pong paddles
+   cv::rectangle(_canvas, _player_paddle, cv::Scalar(255, 255, 255), -1);
+   cv::rectangle(_canvas, _computer_paddle, cv::Scalar(255, 255, 255), -1);
+
+   // divider line
+   cv::line(_canvas, cv::Point(_canvas.cols / 2, 0), cv::Point(_canvas.cols / 2, _canvas.rows), cv::Scalar(255, 255, 255), 1);
 
    cvui::update();
 
    cv::imshow(CANVAS_NAME, _canvas);
-
-
 
    return true;
    }
