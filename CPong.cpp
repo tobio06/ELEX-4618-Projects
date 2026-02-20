@@ -49,7 +49,6 @@ bool CPong::update()
 
    /////////////////////
    // JOYSTICK CONTROL
-   // Y AXIS
    if (_joystick_percent > JOYSTICK_Y_CENTER + JOYSTICK_DEADZONE)
       {
       if (_joystick_percent > SPEED_THRESHOLD)
@@ -71,10 +70,9 @@ bool CPong::update()
    else
       _y_incrementer = 0;
 
-   _draw_position = cv::Point(JOYSTICK_X_SCALER * (_previous_x_draw_position + _x_incrementer) - 75,
-      JOYSTICK_Y_SCALER * (100 - (_previous_y_draw_position + _y_incrementer)) - 180);
+   //_draw_position = cv::Point(JOYSTICK_X_SCALER * (_previous_x_draw_position + _x_incrementer) - 75,
+   //   JOYSTICK_Y_SCALER * (100 - (_previous_y_draw_position + _y_incrementer)) - 180);
 
-   _previous_x_draw_position += _x_incrementer;
    _previous_y_draw_position += _y_incrementer;
 
    // keep the draw position within the bounds of the canvas
@@ -102,10 +100,23 @@ bool CPong::update()
    // translate the joystick position to an area to be coloured
    _position_to_colour = cv::Rect(_draw_position, cv::Size(2, 2));
 
+   return true;
    }
 
 
 bool CPong::draw()
    {
+   if (_reset)
+      {
+      _canvas.setTo(cv::Scalar(0, 0, 0));
+      _reset = false;
+      }
 
+   cv::circle(_canvas, SCREEN_CENTER, ORIGINAL_BALL_RADIUS, cv::Scalar(255, 255, 255), -1);
+
+   cvui::update();
+
+   cv::imshow(CANVAS_NAME, _canvas);
+
+   return true;
    }

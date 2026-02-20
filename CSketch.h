@@ -15,7 +15,7 @@
 #define JOYSTICK_X_SCALER 12 ///< Scaler for the joystick x input, used to translate the joystick position to a position on the canvas
 #define JOYSTICK_Y_SCALER 11.5 ///< Scaler for the joystick y input, used to translate the joystick position to a position on the canvas
 #define JOYSTICK_X_CENTER 47 ///< Center percentage value for the joystick x input
-#define JOYSTICK_Y_CENTER 51 ///< Center percentage value for the joystick y input
+#define JOYSTICK_Y_CENTER 59 ///< Center percentage value for the joystick y input
 #define JOYSTICK_DEADZONE 10 ///< Deadzone percentage for the joystick input, used to filter noise
 
 #define SPEED_THRESHOLD 85 ///< Threshold percentage for the joystick input, used to determine whether to use slow or fast speed scale for drawing
@@ -39,17 +39,13 @@ class CSketch : public CBase4618
     private:
        int _reset = 0; ///< Whether the canvas should be cleared
 
-       double _joystick_x_percent = 0; ///< Percentage of joystick deflection in the x direction
-       double _joystick_y_percent = 0; ///< Percentage of joystick deflection in the y direction
+       cv::Point _joystick_percent = (0,0); ///< Percentage of joystick deflection
+       cv::Point _incrementer = (0, 0); ///< Increments or decrements the draw position in the x and y directions
 
-       double _x_incrementer = 0; ///< Increments or decrements the draw position in the x direction 
-       double _y_incrementer = 0; ///< Increments or decrements the draw position in the x direction
-
-       double _previous_x_draw_position = JOYSTICK_X_CENTER; ///< Previous x position that was drawn
-       double _previous_y_draw_position = JOYSTICK_Y_CENTER; ///< Previous y position that was 
+       cv::Point _previous_draw_position = (50, 50); ///< Previous position that was drawn
 
 		 cv::Point _draw_position; ///< Position to draw 
-       cv::Point _previous_draw_position; ///< Previous position of that was drawn, used for smoothing lines
+       cv::Point _previous_draw_position2; ///< Previous position that was drawn, used for smoothing lines
        cv::Rect _position_to_colour; ///< Area to be coloured based on the draw position
 
        cv::Scalar _colours[5] = { RED, GREEN, BLUE, YELLOW, WHITE }; ///< Colours to be used for drawing

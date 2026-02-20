@@ -49,60 +49,59 @@ bool CSketch::update()
    {
     _reset = _control.get_button(BUTTON1);
 
-    _joystick_x_percent = gpio(ANALOG, JOYSTICK_X);
-    _joystick_y_percent = gpio(ANALOG, JOYSTICK_Y);
+    _joystick_percent = cv::Point(gpio(ANALOG, JOYSTICK_X), gpio(ANALOG, JOYSTICK_Y));
 
     /////////////////////
     // JOYSTICK CONTROL
     // X AXIS
-    if (_joystick_x_percent > JOYSTICK_X_CENTER + JOYSTICK_DEADZONE)
+    if (_joystick_percent.x > JOYSTICK_X_CENTER + JOYSTICK_DEADZONE)
        {
-       if (_joystick_x_percent > SPEED_THRESHOLD)
+       if (_joystick_percent.x > SPEED_THRESHOLD)
           {
-          _x_incrementer = _joystick_x_percent * FAST_SPEED_SCALE;
+          _incrementer.x = _joystick_percent.x * FAST_SPEED_SCALE;
           } 
        else
-       _x_incrementer = _joystick_x_percent * SLOW_SPEED_SCALE;
+       _incrementer.x = _joystick_percent.x * SLOW_SPEED_SCALE;
        }
-    else if (_joystick_x_percent < JOYSTICK_X_CENTER - JOYSTICK_DEADZONE)
+    else if (_joystick_percent.x < JOYSTICK_X_CENTER - JOYSTICK_DEADZONE)
        {
-       if (_joystick_x_percent < 100 - SPEED_THRESHOLD)
+       if (_joystick_percent.x < 100 - SPEED_THRESHOLD)
           {
-          _x_incrementer = (_joystick_x_percent - 100) * FAST_SPEED_SCALE;
+          _incrementer.x = (_joystick_percent.x - 100) * FAST_SPEED_SCALE;
           }
        else
-       _x_incrementer = ( _joystick_x_percent - 100) * SLOW_SPEED_SCALE;
+       _incrementer.x = ( _joystick_percent.x - 100) * SLOW_SPEED_SCALE;
        }
     else 
-       _x_incrementer = 0;
+       _incrementer.x = 0;
 
     // Y AXIS
-    if (_joystick_y_percent > JOYSTICK_Y_CENTER + JOYSTICK_DEADZONE)
+    if (_joystick_percent.y > JOYSTICK_Y_CENTER + JOYSTICK_DEADZONE)
        {
-       if (_joystick_y_percent > SPEED_THRESHOLD)
+       if (_joystick_percent.y > SPEED_THRESHOLD)
           {
-          _y_incrementer = _joystick_y_percent * FAST_SPEED_SCALE;
+          _incrementer.y = _joystick_percent.y * FAST_SPEED_SCALE;
           }
        else
-          _y_incrementer = _joystick_y_percent * SLOW_SPEED_SCALE;
+          _incrementer.y = _joystick_percent.y * SLOW_SPEED_SCALE;
        }
-    else if (_joystick_y_percent < JOYSTICK_Y_CENTER - JOYSTICK_DEADZONE)
+    else if (_joystick_percent.y < JOYSTICK_Y_CENTER - JOYSTICK_DEADZONE)
        {
-       if (_joystick_y_percent < 100 - SPEED_THRESHOLD)
+       if (_joystick_percent.y < 100 - SPEED_THRESHOLD)
           {
-          _y_incrementer = (_joystick_y_percent - 100) * FAST_SPEED_SCALE;
+          _incrementer.y = (_joystick_percent.y - 100) * FAST_SPEED_SCALE;
           }
        else
-          _y_incrementer = (_joystick_y_percent - 100) * SLOW_SPEED_SCALE;
+          _incrementer.y = (_joystick_percent.y - 100) * SLOW_SPEED_SCALE;
        }
     else
-       _y_incrementer = 0;
+       _incrementer.y = 0;
       
-    _draw_position = cv::Point(JOYSTICK_X_SCALER * (_previous_x_draw_position + _x_incrementer) - 75,
-                                   JOYSTICK_Y_SCALER * (100 - (_previous_y_draw_position + _y_incrementer)) - 180);
+    _draw_position = cv::Point(JOYSTICK_X_SCALER * (_previous_draw_position.x + _incrementer.x) - 75,
+                                   JOYSTICK_Y_SCALER * (100 - (_previous_draw_position.y + _incrementer.y)) - 180);
 
-    _previous_x_draw_position += _x_incrementer;
-    _previous_y_draw_position += _y_incrementer;
+    _previous_draw_position.x += _incrementer.x;
+    _previous_draw_position.y += _incrementer.y;
 
     // keep the draw position within the bounds of the canvas
     while (_draw_position.x < 0 || _draw_position.x > _canvas.cols - 2 ||
@@ -199,12 +198,12 @@ bool CSketch::draw()
    // create smooth lines
    if (_smoothed)
       {
-      cv::line(_canvas, _previous_draw_position, _draw_position, _colours[_colour_index], 2);
-      _previous_draw_position = _draw_position;
+      cv::line(_canvas, _previous_draw_position2, _draw_position, _colours[_colour_index], 2);
+      _previous_draw_position2 = _draw_position;
       }
    else
       {
-      _previous_draw_position = _draw_position;
+      _previous_draw_position2 = _draw_position;
       _smoothed = true;
       }
 

@@ -5,6 +5,7 @@
 
 #define CANVAS_NAME "Pong" ///< Name of the canvas and window for the Pong game
 #define PONG_WINDOW_SIZE cv::Size(1000, 800) ///< Size of the canvas 
+#define SCREEN_CENTER cv::Point(PONG_WINDOW_SIZE.width / 2, PONG_WINDOW_SIZE.height / 2) ///< Center point of the canvas
 
 #define JOYSTICK_Y_SCALER 11.5 ///< Scaler for the joystick y input, used to translate the joystick position to a position on the canvas
 #define JOYSTICK_Y_CENTER 51 ///< Center percentage value for the joystick y input
@@ -14,8 +15,9 @@
 #define SLOW_SPEED_SCALE 0.005 ///< Scale for slow speed 
 #define FAST_SPEED_SCALE 0.02 ///< Scale for fast speed
 
-#define PADDLE_WIDTH 25 ///< Width of the 
+#define PADDLE_WIDTH 25 ///< Width of the paddle
 #define PADDLE_HEIGHT 150 ///< Height of the paddle
+#define ORIGINAL_BALL_RADIUS 50 ///< Original radius of the ball
 
 class CPong : public CBase4618
     {
@@ -33,13 +35,14 @@ class CPong : public CBase4618
 
        cv::Rect _player_paddle = cv::Rect(); ///< Rectangle representing the player's paddle
        cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
+       cv::Point _ball_position; ///< Position of the ball 
 
     public:
        CPong(cv::Size size, int comport);
        ~CPong();
 
-       /** @brief Communicates with the embedded system to get the value of a digital or analog input
-       *
+       /** @brief Communicates with the embedded system to get the value of a digital or analog 
+       * 
        * @param type The type of data to be set or received (Digital, Analog, or Servo)
        * @param channel The channel to communicate with
        *
