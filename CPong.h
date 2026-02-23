@@ -14,15 +14,26 @@
 
 #define SPEED_THRESHOLD 85 ///< Threshold percentage for the joystick input, used to determine whether to use slow or fast speed scale 
 #define SLOW_SPEED_SCALE 0.05 ///< Scale for slow speed 
-#define FAST_SPEED_SCALE 0.2 ///< Scale for fast speed
+#define FAST_SPEED_SCALE 0.1 ///< Scale for fast speed
 
 #define PADDLE_WIDTH 25 ///< Width of the paddle
 #define PADDLE_HEIGHT 150 ///< Height of the paddle
 #define ORIGINAL_BALL_RADIUS 50 ///< Original radius of the ball
 
 
-#define _30_FPS_DELAY 1000 / 30 ///< Delay in milliseconds to achieve approximately 30 frames per second
+//#define _30_FPS_DELAY 1 / 30 ///< Delay in seconds to achieve approximately 30 frames per second
 
+
+/**
+*
+* @brief Holds all code for the Pong lab in ELEX 4618
+*
+* This class is meant to contain all defines, variables and function implementations
+* needed to create and run the Pong lab for ELEX 4618.
+*
+* @author Tobio Yeung
+*
+*/
 class CPong : public CBase4618
    {
    private:
@@ -39,6 +50,7 @@ class CPong : public CBase4618
       cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
       cv::Rect _ball_hitbox = cv::Rect(); ///< Rectangle representing the hitbox of the ball, used for collision detection with paddles
 
+      //double _30_fps_delay = 0.033333; ///< Delay in seconds to achieve approximately 30 frames per second
       double _fps = 0.0; ///< Frames per second
       std::string _fps_string = ""; ///< String representation of the frames per second to be displayed in the GUI
 
@@ -47,8 +59,7 @@ class CPong : public CBase4618
       cv::Point _ball_velocity = cv::Point(_ball_speed, _ball_speed); ///< Velocity of the ball in pixels per frame
       cv::Point _ball_position = SCREEN_CENTER; ///< Position of the ball
 
-      int64 _time_start_frame; ///< Time point for the start of the frame, used for calculating elapsed time and FPS
-      double _time_last_frame; ///< Time point for the last frame, used for calculating elapsed time and FPS
+      std::chrono::steady_clock::time_point _last_frame_time; ///< Time point of the last frame
 
       int _player_score = 0; ///< Player's score
       int _computer_score = 0; ///< Computer's score

@@ -11,7 +11,7 @@ CPong::CPong(cv::Size canvas_size, int comport)
 
    _canvas = cv::Mat::zeros(canvas_size, CV_8UC3);
 
-   _time_last_frame = cv::getTickCount();
+   _last_frame_time = std::chrono::steady_clock::now();
    }
 
 CPong::~CPong()
@@ -45,11 +45,35 @@ double CPong::gpio(int type, int channel)
 
 bool CPong::update()
    {
-   // get the time at the start of the frame for calculating elapsed time and FPS
-   _time_start_frame = cv::getTickCount();
+   ///////////////////////////////////////////
+   // MEASURE TIME ELAPSED AND LOCK FPS AT 30
 
-   float dt = (_time_start_frame - _time_last_frame) / cv::getTickFrequency();
-   _time_last_frame = _time_start_frame;
+    // time for 30 fps
+    const double target_frame_time = 1.0 / 40.0;
+
+    auto time_now = std::chrono::steady_clock::now();
+
+    std::chrono::duration<double> elapsed_time = time_now - _last_frame_time;
+
+    // lock framerate to 30fps
+    if (elapsed_time.count() < target_frame_time)
+    {
+        auto wake_time = _last_frame_time + std::chrono::duration<double>(target_frame_time);
+
+        std::this_thread::sleep_until(wake_time);
+
+        time_now = std::chrono::steady_clock::now();
+        elapsed_time = time_now - _last_frame_time;
+    }
+
+    double dt = elapsed_time.count();
+
+    _last_frame_time = time_now;
+
+    // fps calculation
+    _fps = 1.0 / dt;
+    _fps_string = std::to_string(_fps);
+
 
    // control reset with button 1
    _reset = _control.get_button(BUTTON1);
@@ -158,25 +182,6 @@ bool CPong::update()
       _ball_position.x = _player_paddle.x - _ball_radius;
       _ball_velocity.x = -_ball_velocity.x;
       }
-
-   ///////////////////////////////////////////
-   // MEASURE TIME ELAPSED AND LOCK FPS AT 30
-
-   if (dt < _30_FPS_DELAY)
-      {
-      int time_elapsed = (int)((cv::getTickCount() - _time_start_frame) / cv::getTickFrequency() * 1000);
-
-      int delay_time = _30_FPS_DELAY - time_elapsed;
-      if (delay_time > 0)
-         {
-         std::this_thread::sleep_for(std::chrono::milliseconds(delay_time));
-         }
-
-    dt = ( cv:: getTickCount() - _time_start_frame) / cv::getTickFrequency();
-      }
-
-   _fps = 1.0 / dt;
-   _fps_string = std::to_string(_fps);
 
    return true;
    }

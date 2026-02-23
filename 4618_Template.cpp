@@ -332,7 +332,7 @@ void lab3()
 {
     CLab3Functions control;
     char command = 0;
-    control.init_com(3);
+    control.init_com(4);
 
 	while (command != 'q' && command != 'Q')
 	{
@@ -372,7 +372,7 @@ void lab3()
 ////////////////////////////////////////////////////////////////
 void lab4()
 {
-   CSketch sketch(ETCHASKETCH_WINDOW_SIZE, 3);
+   CSketch sketch(ETCHASKETCH_WINDOW_SIZE, 4);
 
    sketch.run();
 }
@@ -382,7 +382,7 @@ void lab4()
 ////////////////////////////////////////////////////////////////
 void lab5()
 {
-   CPong pong(PONG_WINDOW_SIZE, 3);
+   CPong pong(PONG_WINDOW_SIZE, 4);
 
    pong.run();
 }
