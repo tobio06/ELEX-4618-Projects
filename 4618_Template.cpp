@@ -382,7 +382,7 @@ void lab4()
 ////////////////////////////////////////////////////////////////
 void lab5()
 {
-   CPong pong(PONG_WINDOW_SIZE, 4);
+   CPong pong(PONG_WINDOW_SIZE, 3);
 
    pong.run();
 }

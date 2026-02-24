@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="4618_Template.cpp" />
+    <ClCompile Include="CBase4618.cpp" />
+    <ClCompile Include="Serial.cpp">
+      <Filter>Background Files</Filter>
+    </ClCompile>
+    <ClCompile Include="server.cpp">
+      <Filter>Background Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Background Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CGameObject.cpp" />
+    <ClCompile Include="CAsteroid.cpp">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClCompile>
+    <ClCompile Include="CAsteroidGame.cpp">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClCompile>
+    <ClCompile Include="CMissle.cpp">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClCompile>
+    <ClCompile Include="CShip.cpp">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClCompile>
+    <ClCompile Include="CPong.cpp">
+      <Filter>Lab5 Pong</Filter>
+    </ClCompile>
+    <ClCompile Include="CSketch.cpp">
+      <Filter>Lab4 Etch A Sketch</Filter>
+    </ClCompile>
+    <ClCompile Include="Control.cpp">
+      <Filter>Lab3 Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Lab3Functions.cpp">
+      <Filter>Lab3 Control</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CBase4618.h" />
+    <ClInclude Include="stdafx.h">
+      <Filter>Background Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serial.h">
+      <Filter>Background Files</Filter>
+    </ClInclude>
+    <ClInclude Include="server.h">
+      <Filter>Background Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cvui.h">
+      <Filter>Background Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CGameObject.h" />
+    <ClInclude Include="CAsteroid.h">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClInclude>
+    <ClInclude Include="CAsteroidGame.h">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClInclude>
+    <ClInclude Include="CMissle.h">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClInclude>
+    <ClInclude Include="CShip.h">
+      <Filter>Lab6 Asteroids</Filter>
+    </ClInclude>
+    <ClInclude Include="CPong.h">
+      <Filter>Lab5 Pong</Filter>
+    </ClInclude>
+    <ClInclude Include="CSketch.h">
+      <Filter>Lab4 Etch A Sketch</Filter>
+    </ClInclude>
+    <ClInclude Include="Control.h">
+      <Filter>Lab3 Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Lab3Functions.h">
+      <Filter>Lab3 Control</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Background Files">
+      <UniqueIdentifier>{e66786ed-81ff-4249-b74b-834f5afe9ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lab6 Asteroids">
+      <UniqueIdentifier>{53a389be-d9f4-4d4d-82c7-b72078ca3de9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lab5 Pong">
+      <UniqueIdentifier>{59fd5e9f-7508-4f59-a7ea-4bd9728c60bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lab4 Etch A Sketch">
+      <UniqueIdentifier>{448f5cbf-1706-4d52-a5ff-35aaeda8ab7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lab3 Control">
+      <UniqueIdentifier>{3adc67b8-1025-4ae1-9210-52306094b5c4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

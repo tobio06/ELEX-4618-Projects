@@ -50,7 +50,6 @@ class CPong : public CBase4618
       cv::Rect _computer_paddle = cv::Rect(); ///< Rectangle representing the computer's paddle
       cv::Rect _ball_hitbox = cv::Rect(); ///< Rectangle representing the hitbox of the ball, used for collision detection with paddles
 
-      //double _30_fps_delay = 0.033333; ///< Delay in seconds to achieve approximately 30 frames per second
       double _fps = 0.0; ///< Frames per second
       std::string _fps_string = ""; ///< String representation of the frames per second to be displayed in the GUI
 
