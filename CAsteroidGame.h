@@ -2,11 +2,18 @@
 
 #include "opencv2/core.hpp"
 #include "CBase4618.h"
+#include "CShip.h"
+#include "CAsteroid.h"
+#include "CMissile.h"
+
+#define BOARD_SIZE cv::Size(1920, 1080)
+#define BOARD_CENTER cv::Point2f(BOARD_SIZE.width / 2, BOARD_SIZE.height / 2)
 
 class CAsteroidGame : public CBase4618
     {
-    private:
-
+    protected:
+        std::vector<CAsteroid> _asteroid_list;
+        std::vector<CMissile> _missile_list;
 
     public: 
        CAsteroidGame(cv::Size size, int comport);
@@ -32,5 +39,10 @@ class CAsteroidGame : public CBase4618
        * @return True or false
        */
        bool CBase4618::draw() override;
+       /** @brief calls update, gpio and draw to run the program, and quits when the user presses the 'q' key
+       *
+       * @return Returns nothing
+       */
+       void run();
     };
 

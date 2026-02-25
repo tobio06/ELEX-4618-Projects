@@ -2,13 +2,14 @@
 #include "CGameObject.h"
 #include "CAsteroidGame.h"
 
-class CShip : public CGameObject
+class CMissile : public CGameObject
     {
+
     private:
 
     public:
-        CShip();
-        ~CShip();
+        CMissile();
+        ~CMissile();
 
     };
 

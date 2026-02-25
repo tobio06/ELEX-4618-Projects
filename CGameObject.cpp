@@ -69,12 +69,12 @@ int CGameObject::get_lives()
 
 void CGameObject::set_lives(int lives)
    {
-
+    _lives = lives;
    }
 
 void CGameObject::set_pos(cv::Point2f pos)
    {
-
+    _position = pos;
    }
 
 cv::Point2f CGameObject::get_pos()

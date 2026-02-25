@@ -19,7 +19,7 @@
     <ClCompile Include="CAsteroidGame.cpp">
       <Filter>Lab6 Asteroids</Filter>
     </ClCompile>
-    <ClCompile Include="CMissle.cpp">
+    <ClCompile Include="CMissile.cpp">
       <Filter>Lab6 Asteroids</Filter>
     </ClCompile>
     <ClCompile Include="CShip.cpp">
@@ -59,7 +59,7 @@
     <ClInclude Include="CAsteroidGame.h">
       <Filter>Lab6 Asteroids</Filter>
     </ClInclude>
-    <ClInclude Include="CMissle.h">
+    <ClInclude Include="CMissile.h">
       <Filter>Lab6 Asteroids</Filter>
     </ClInclude>
     <ClInclude Include="CShip.h">
