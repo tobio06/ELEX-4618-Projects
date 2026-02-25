@@ -46,12 +46,10 @@ bool CAsteroidGame::update()
     for (auto& a : _asteroid_list)
         a.move();
 
-    //ship.set_pos();
-
-    _joystick_percent = cv::Point2f(gpio(ANALOG, JOYSTICK_X), gpio(ANALOG, JOYSTICK_Y));
-
     /////////////////////
     // SHIP CONTROL
+    _joystick_percent = cv::Point2f(gpio(ANALOG, JOYSTICK_X), gpio(ANALOG, JOYSTICK_Y));
+
     _joystick_movement.x = _joystick_percent.x - JOYSTICK_X_CENTER;
     _joystick_movement.y = JOYSTICK_Y_CENTER - _joystick_percent.y; // invert Y so up is positive
 

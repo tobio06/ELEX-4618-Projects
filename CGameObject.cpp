@@ -16,6 +16,7 @@ void CGameObject::move()
    ////////////////////
    // MOVE THE OBJECT
    _position += _velocity * dt;
+   _velocity += _acceleration * dt;
    }
 
 bool CGameObject::collide(CGameObject& obj)

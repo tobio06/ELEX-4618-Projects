@@ -6,8 +6,8 @@ class CGameObject
    {
    protected:
       cv::Point2f _position;
-
       cv::Point2f _velocity;
+      cv::Point2f _acceleration;
 
       int _radius;
 
@@ -31,6 +31,10 @@ class CGameObject
       void set_pos(cv::Point2f pos) { _position = pos; }
 
       cv::Point2f get_pos() { return _position; }
+
+      void set_accel(cv::Point2f pos) { _acceleration = pos; }
+
+      cv::Point2f get_accel() { return _acceleration; }
 
       void draw(cv::Mat& im);
    };

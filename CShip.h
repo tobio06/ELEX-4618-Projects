@@ -6,7 +6,7 @@
 
 class CShip : public CGameObject
     {
-    private:
+    protected:
 
     public:
         CShip();
