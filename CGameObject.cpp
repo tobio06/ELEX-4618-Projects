@@ -15,23 +15,16 @@ void CGameObject::move()
 
    ////////////////////
    // MOVE THE OBJECT
-   double velocity_magnitude = sqrt(pow(_velocity.x, 2) + pow(_velocity.y, 2));
-
-   // scale velocity with speed while maintaining direction
-   if (velocity_magnitude != 0)
-      _velocity = cv::Point((_velocity.x / velocity_magnitude) * _speed, (_velocity.y / velocity_magnitude) * _speed);
-
-   // update position with velocity
    _position += _velocity * dt;
    }
 
 bool CGameObject::collide(CGameObject& obj)
    {
-   if (abs(_position.x - obj._position.x) < (_radius + obj._radius) ||
-      abs(_position.y - obj._position.y) < (_radius + obj._radius))
-      {
-      return true;
-      }
+    cv::Point2f distance_component = (_position.x - obj._position.x, _position.y - obj._position.y);
+
+    float distance = sqrt(pow(distance_component.x, 2) + pow(distance_component.y, 2));
+
+    return (distance <= (_radius + obj._radius));
    }
 
 bool CGameObject::collide_wall(cv::Size board)
@@ -60,26 +53,6 @@ bool CGameObject::collide_wall(cv::Size board)
 void CGameObject::hit()
    {
 
-   }
-
-int CGameObject::get_lives()
-   {
-   return _lives;
-   }
-
-void CGameObject::set_lives(int lives)
-   {
-    _lives = lives;
-   }
-
-void CGameObject::set_pos(cv::Point2f pos)
-   {
-    _position = pos;
-   }
-
-cv::Point2f CGameObject::get_pos()
-   {
-   return _position;
    }
 
 void CGameObject::draw(cv::Mat& im)

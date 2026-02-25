@@ -1,8 +1,16 @@
 #include "stdafx.h"
 #include "CAsteroidGame.h"
 
-CAsteroidGame::CAsteroidGame(cv::Size size, int comport)
+#include "cvui.h"
+
+CAsteroidGame::CAsteroidGame(cv::Size canvas_size, int comport)
    {
+    _control.init_com(comport);
+
+    cvui::init(CANVAS_NAME);
+
+    _canvas = cv::Mat::zeros(canvas_size, CV_8UC3);
+
     _last_asteroid_spawn = std::chrono::steady_clock::now();
    }
 
@@ -35,7 +43,12 @@ double CAsteroidGame::gpio(int type, int channel)
 
 bool CAsteroidGame::update()
     {
+    for (auto& a : _asteroid_list)
+        a.move();
 
+    //ship.set_pos();
+
+    return true;
     }
 
 bool CAsteroidGame::draw()
@@ -50,9 +63,15 @@ bool CAsteroidGame::draw()
     for (auto& a : _asteroid_list)
         a.draw(_canvas);
 
-    // Draw missiles
-    for (auto& m : _missile_list)
-        m.draw(_canvas);
+    //// Draw missiles
+    //for (auto& m : _missile_list)
+    //    m.draw(_canvas);
+
+    cvui::update();
+
+    cv::imshow(CANVAS_NAME, _canvas);
+
+    return true;
     }
 
 void CAsteroidGame::run()
@@ -64,8 +83,8 @@ void CAsteroidGame::run()
         // time since last asteroid spawned
         float time_elapsed = std::chrono::duration<float>(now - _last_asteroid_spawn).count();
 
-        // spawn every 2–4 seconds
-        if (time_elapsed > 2.0f + static_cast<float>(rand()) / RAND_MAX * SPAWN_DELAY)
+        // spawn every 1-3 seconds
+        if (time_elapsed > 1.0f + static_cast<float>(rand()) / RAND_MAX * SPAWN_DELAY)
         {
             _asteroid_list.emplace_back(); // create asteroid
             _last_asteroid_spawn = now;    // reset timer

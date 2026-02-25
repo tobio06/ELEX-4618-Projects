@@ -6,7 +6,7 @@ CMissile::CMissile()
 
 }
 
-CAsteroid::~CAsteroid()
+CMissile::~CMissile()
 {
 
 }
