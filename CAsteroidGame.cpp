@@ -3,7 +3,7 @@
 
 CAsteroidGame::CAsteroidGame(cv::Size size, int comport)
    {
-
+    _last_asteroid_spawn = std::chrono::steady_clock::now();
    }
 
 CAsteroidGame::~CAsteroidGame()
@@ -44,7 +44,7 @@ bool CAsteroidGame::draw()
     _canvas.setTo(cv::Scalar(0, 0, 0));
 
     // Draw ship
-    ship.draw(_canvas);
+    //ship.draw(_canvas);
 
     // Draw asteroids
     for (auto& a : _asteroid_list)
@@ -59,8 +59,17 @@ void CAsteroidGame::run()
 {
     while (true)
     {
-        // randomly create asteroid
-        _asteroid_list.emplace_back();
+        auto now = std::chrono::steady_clock::now();
+
+        // time since last asteroid spawned
+        float time_elapsed = std::chrono::duration<float>(now - _last_asteroid_spawn).count();
+
+        // spawn every 2–4 seconds
+        if (time_elapsed > 2.0f + static_cast<float>(rand()) / RAND_MAX * SPAWN_DELAY)
+        {
+            _asteroid_list.emplace_back(); // create asteroid
+            _last_asteroid_spawn = now;    // reset timer
+        }
 
         if (cv::waitKey(1) == 'q' || !update() || !draw())
         {

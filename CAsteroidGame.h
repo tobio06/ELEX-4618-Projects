@@ -8,12 +8,14 @@
 
 #define BOARD_SIZE cv::Size(1920, 1080)
 #define BOARD_CENTER cv::Point2f(BOARD_SIZE.width / 2, BOARD_SIZE.height / 2)
+#define SPAWN_DELAY 2
 
 class CAsteroidGame : public CBase4618
     {
     protected:
         std::vector<CAsteroid> _asteroid_list;
         std::vector<CMissile> _missile_list;
+        std::chrono::steady_clock::time_point _last_asteroid_spawn;
 
     public: 
        CAsteroidGame(cv::Size size, int comport);
