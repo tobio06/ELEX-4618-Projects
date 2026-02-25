@@ -12,6 +12,11 @@ CSketch::CSketch(cv::Size canvas_size, int comport)
    cvui::init(CANVAS_NAME);
 
    _canvas = cv::Mat::zeros(canvas_size, CV_8UC3);
+
+   _previous_draw_position = SCREEN_CENTER;
+   _last_drawn_point = SCREEN_CENTER;
+   _draw_position = SCREEN_CENTER;
+
    }
 
 CSketch::~CSketch()
@@ -53,80 +58,49 @@ bool CSketch::update()
 
    /////////////////////
    // JOYSTICK CONTROL
-   // X AXIS
-   if (_joystick_percent.x > JOYSTICK_X_CENTER + JOYSTICK_DEADZONE)
-      {
-      if (_joystick_percent.x > SPEED_THRESHOLD)
-         {
-         _incrementer.x = _joystick_percent.x * FAST_SPEED_SCALE;
-         }
-      else
-         _incrementer.x = _joystick_percent.x * SLOW_SPEED_SCALE;
-      }
-   else if (_joystick_percent.x < JOYSTICK_X_CENTER - JOYSTICK_DEADZONE)
-      {
-      if (_joystick_percent.x < 100 - SPEED_THRESHOLD)
-         {
-         _incrementer.x = (_joystick_percent.x - 100) * FAST_SPEED_SCALE;
-         }
-      else
-         _incrementer.x = (_joystick_percent.x - 100) * SLOW_SPEED_SCALE;
-      }
-   else
-      _incrementer.x = 0;
 
-   // Y AXIS
-   if (_joystick_percent.y > JOYSTICK_Y_CENTER + JOYSTICK_DEADZONE)
-      {
-      if (_joystick_percent.y > SPEED_THRESHOLD)
-         {
-         _incrementer.y = _joystick_percent.y * FAST_SPEED_SCALE;
-         }
-      else
-         _incrementer.y = _joystick_percent.y * SLOW_SPEED_SCALE;
-      }
-   else if (_joystick_percent.y < JOYSTICK_Y_CENTER - JOYSTICK_DEADZONE)
-      {
-      if (_joystick_percent.y < 100 - SPEED_THRESHOLD)
-         {
-         _incrementer.y = (_joystick_percent.y - 100) * FAST_SPEED_SCALE;
-         }
-      else
-         _incrementer.y = (_joystick_percent.y - 100) * SLOW_SPEED_SCALE;
-      }
-   else
-      _incrementer.y = 0;
+   _joystick_movement.x = _joystick_percent.x - JOYSTICK_X_CENTER;
+   _joystick_movement.y = JOYSTICK_Y_CENTER - _joystick_percent.y; // invert Y so up is positive
 
-   _draw_position = cv::Point2f(JOYSTICK_X_SCALER * _previous_draw_position.x + _incrementer.x,
-      JOYSTICK_Y_SCALER * (100 - _previous_draw_position.y + _incrementer.y));
+   // apply deadzone
+   if (abs(_joystick_movement.x) < JOYSTICK_DEADZONE)
+       _joystick_movement.x = 0;
 
-   _previous_draw_position.x += _incrementer.x;
-   _previous_draw_position.y += _incrementer.y;
+   if (abs(_joystick_movement.y) < JOYSTICK_DEADZONE)
+       _joystick_movement.y = 0;
 
-   // keep the draw position within the bounds of the canvas
-   while (_draw_position.x < 0 || _draw_position.x > _canvas.cols - 2 ||
-      _draw_position.y < 0 || _draw_position.y > _canvas.rows - 2)
-      {
-      if (_draw_position.x < 0)
-         {
-         _draw_position.x = 0;
-         }
-      else if (_draw_position.x > _canvas.cols - 2)
-         {
-         _draw_position.x = _canvas.cols - 2;
-         }
-      else if (_draw_position.y < 0)
-         {
-         _draw_position.y = 0;
-         }
-      else if (_draw_position.y > _canvas.rows - 2)
-         {
-         _draw_position.y = _canvas.rows - 2;
-         }
-      }
+   // determine speed scale
+   if (_joystick_percent.x > SPEED_THRESHOLD ||
+       _joystick_percent.x < (100 - SPEED_THRESHOLD))
+       _speed_scale.x = FAST_SPEED_SCALE;
 
-   // translate the joystick position to an area to be coloured
-   _position_to_colour = cv::Rect(_draw_position, cv::Size(2, 2));
+   if (_joystick_percent.y > SPEED_THRESHOLD ||
+       _joystick_percent.y < (100 - SPEED_THRESHOLD))
+       _speed_scale.y = FAST_SPEED_SCALE;
+
+   // calculate incrementer in pixel space
+   _incrementer.x = _joystick_movement.x * _speed_scale.x;
+   _incrementer.y = _joystick_movement.y * _speed_scale.y;
+
+   // update draw position smoothly (float space)
+   _draw_position = _previous_draw_position + _incrementer;
+
+   // boundary clamping (accounting for 2x2 draw size)
+   if (_draw_position.x < 0)
+       _draw_position.x = 0;
+   if (_draw_position.x > _canvas.cols - 2)
+       _draw_position.x = _canvas.cols - 2;
+
+   if (_draw_position.y < 0)
+       _draw_position.y = 0;
+   if (_draw_position.y > _canvas.rows - 2)
+       _draw_position.y = _canvas.rows - 2;
+
+   // store for next frame
+   _previous_draw_position = _draw_position;
+
+   // rectangle to colour
+   _position_to_colour = cv::Rect(cv::Point((int)_draw_position.x, (int)_draw_position.y), cv::Size(2, 2));
 
    // change colour if button 2 is pressed
    if (_control.get_button(BUTTON2))
@@ -195,17 +169,15 @@ bool CSketch::draw()
    // drawing
    _canvas(_position_to_colour).setTo(_colours[_colour_index]);
 
-   // create smooth lines
-   if (_smoothed)
-      {
-      cv::line(_canvas, _previous_draw_position2, _draw_position, _colours[_colour_index], 2);
-      _previous_draw_position2 = _draw_position;
-      }
-   else
-      {
-      _previous_draw_position2 = _draw_position;
-      _smoothed = true;
-      }
+   // smooth continuous line drawing
+   cv::line(_canvas,
+       cv::Point((int)_last_drawn_point.x, (int)_last_drawn_point.y),
+       cv::Point((int)_draw_position.x, (int)_draw_position.y),
+       _colours[_colour_index],
+       2,
+       cv::LINE_AA);  // anti-aliased
+
+   _last_drawn_point = _draw_position;
 
    cvui::update();
 

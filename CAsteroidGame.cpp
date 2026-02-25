@@ -48,6 +48,51 @@ bool CAsteroidGame::update()
 
     //ship.set_pos();
 
+    _joystick_percent = cv::Point2f(gpio(ANALOG, JOYSTICK_X), gpio(ANALOG, JOYSTICK_Y));
+
+    /////////////////////
+    // SHIP CONTROL
+    _joystick_movement.x = _joystick_percent.x - JOYSTICK_X_CENTER;
+    _joystick_movement.y = JOYSTICK_Y_CENTER - _joystick_percent.y; // invert Y so up is positive
+
+    // apply deadzone
+    if (abs(_joystick_movement.x) < JOYSTICK_DEADZONE)
+        _joystick_movement.x = 0;
+
+    if (abs(_joystick_movement.y) < JOYSTICK_DEADZONE)
+        _joystick_movement.y = 0;
+
+    // determine speed scale
+    if (_joystick_percent.x > SPEED_THRESHOLD ||
+        _joystick_percent.x < (100 - SPEED_THRESHOLD))
+        _speed_scale.x = FAST_SPEED_SCALE;
+
+    if (_joystick_percent.y > SPEED_THRESHOLD ||
+        _joystick_percent.y < (100 - SPEED_THRESHOLD))
+        _speed_scale.y = FAST_SPEED_SCALE;
+
+    // calculate incrementer in pixel space
+    _incrementer.x = _joystick_movement.x * _speed_scale.x;
+    _incrementer.y = _joystick_movement.y * _speed_scale.y;
+
+    // update draw position smoothly (float space)
+    _draw_position = _previous_draw_position + _incrementer;
+
+    // boundary clamping (accounting for 2x2 draw size)
+    if (_draw_position.x < 0)
+        _draw_position.x = 0;
+    if (_draw_position.x > _canvas.cols - 2)
+        _draw_position.x = _canvas.cols - 2;
+
+    if (_draw_position.y < 0)
+        _draw_position.y = 0;
+    if (_draw_position.y > _canvas.rows - 2)
+        _draw_position.y = _canvas.rows - 2;
+
+    // store for next frame
+    _previous_draw_position = _draw_position;
+
+
     return true;
     }
 

@@ -2,6 +2,7 @@
 
 #include "opencv2/core.hpp"
 #include "CBase4618.h"
+#include "CSketch.h"
 #include "CShip.h"
 #include "CAsteroid.h"
 #include "CMissile.h"
@@ -20,6 +21,17 @@ class CAsteroidGame : public CBase4618
         // std::vector<CMissile> _missile_list;
 
         CShip ship;
+
+        cv::Point2f _joystick_percent = (JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER); ///< Percentage of joystick deflection
+
+        cv::Point2f _incrementer = (0.0, 0.0); ///< Increments or decrements the draw position
+
+        cv::Point2f _joystick_movement; ///< Direction and strength that the joystick is being pushed
+
+        cv::Point2f _speed_scale = (SLOW_SPEED_SCALE, SLOW_SPEED_SCALE);
+
+        cv::Point2f _draw_position; ///< Position to draw 
+        cv::Point2f _previous_draw_position; ///< Previous position that was drawn
 
     public: 
        CAsteroidGame(cv::Size size, int comport);

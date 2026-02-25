@@ -11,16 +11,15 @@
 #define AMOUNT_OF_COLOURS 5 ///< Amount of colour supported for drawing and LED colour changing
 
 #define ETCHASKETCH_WINDOW_SIZE cv::Size(1000, 750) ///< Size of the canvas 
+#define SCREEN_CENTER cv::Point2f(ETCHASKETCH_WINDOW_SIZE.width / 2, ETCHASKETCH_WINDOW_SIZE.height / 2)
 
-#define JOYSTICK_X_SCALER 1 ///< Scaler for the joystick x input, used to translate the joystick position to a position on the canvas
-#define JOYSTICK_Y_SCALER 1 ///< Scaler for the joystick y input, used to translate the joystick position to a position on the canvas
 #define JOYSTICK_X_CENTER 47 ///< Center percentage value for the joystick x input
 #define JOYSTICK_Y_CENTER 51 ///< Center percentage value for the joystick y input
-#define JOYSTICK_DEADZONE 20 ///< Deadzone percentage for the joystick input, used to filter noise
+#define JOYSTICK_DEADZONE 10 ///< Deadzone percentage for the joystick input, used to filter noise
 
 #define SPEED_THRESHOLD 85 ///< Threshold percentage for the joystick input, used to determine whether to use slow or fast speed scale for drawing
-#define SLOW_SPEED_SCALE 0.05 ///< Scale for slow speed drawing
-#define FAST_SPEED_SCALE 0.2 ///< Scale for fast speed drawing
+#define SLOW_SPEED_SCALE 0.1 ///< Scale for slow speed drawing
+#define FAST_SPEED_SCALE 0.5 ///< Scale for fast speed drawing
 
 #define ACCEL_SHAKE_THRESHOLD 2000 ///< Threshold for the change in acceleration to trigger a shake to reset
 
@@ -39,21 +38,22 @@ class CSketch : public CBase4618
    private:
       int _reset = 0; ///< Whether the canvas should be cleared
 
-      cv::Point2f _joystick_percent = (0.0, 0.0); ///< Percentage of joystick deflection
+      cv::Point2f _joystick_percent = (JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER); ///< Percentage of joystick deflection
 
       cv::Point2f _incrementer = (0.0, 0.0); ///< Increments or decrements the draw position
 
-      cv::Point2f _previous_draw_position = (ETCHASKETCH_WINDOW_SIZE.width / 2, ETCHASKETCH_WINDOW_SIZE.height / 2); ///< Previous position that was drawn
+      cv::Point2f _joystick_movement; ///< Direction and strength that the joystick is being pushed
+
+      cv::Point2f _speed_scale = (SLOW_SPEED_SCALE, SLOW_SPEED_SCALE);
 
       cv::Point2f _draw_position; ///< Position to draw 
-      cv::Point2f _previous_draw_position2; ///< Previous position of that was drawn, used for smoothing lines
+      cv::Point2f _previous_draw_position; ///< Previous position that was drawn
+      cv::Point2f _last_drawn_point; ///< Previous position that was drawn, used for smoothing lines
       cv::Rect _position_to_colour; ///< Area to be coloured based on the draw position
 
       cv::Scalar _colours[5] = { RED, GREEN, BLUE, YELLOW, WHITE }; ///< Colours to be used for drawing
       std::string _colour_names[5] = { "RED", "GREEN", "BLUE", "YELLOW", "WHITE" }; ///< Names of the colours to be displayed in the GUI
       int _colour_index = 0; ///< Index of the current colour being used for drawing and changing LED colour with button 2
-
-      bool _smoothed = false; ///< Whether to draw smooth lines 
 
       int _accel_y = 0; ///< Current x acceleration, used for shake to reset
       int _accel_z = 0; ///< Current y acceleration, used for shake to reset
