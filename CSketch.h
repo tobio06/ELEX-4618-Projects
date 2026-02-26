@@ -1,4 +1,4 @@
-#pragma 
+#pragma once
 
 #include "opencv2/core.hpp"
 #include "CBase4618.h"
@@ -38,13 +38,13 @@ class CSketch : public CBase4618
    private:
       int _reset = 0; ///< Whether the canvas should be cleared
 
-      cv::Point2f _joystick_percent = (JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER); ///< Percentage of joystick deflection
+      cv::Point2f _joystick_percent = cv::Point2f(JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER); ///< Percentage of joystick deflection
 
-      cv::Point2f _incrementer = (0.0, 0.0); ///< Increments or decrements the draw position
+      cv::Point2f _incrementer = cv::Point2f(0.0, 0.0); ///< Increments or decrements the draw position
 
       cv::Point2f _joystick_movement; ///< Direction and strength that the joystick is being pushed
 
-      cv::Point2f _speed_scale = (SLOW_SPEED_SCALE, SLOW_SPEED_SCALE);
+      cv::Point2f _speed_scale = cv::Point2f(SLOW_SPEED_SCALE, SLOW_SPEED_SCALE);
 
       cv::Point2f _draw_position; ///< Position to draw 
       cv::Point2f _previous_draw_position; ///< Previous position that was drawn

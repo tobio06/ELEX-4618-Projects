@@ -3,7 +3,7 @@
 
 CMissile::CMissile()
 {
-
+	_radius = 2;
 }
 
 CMissile::~CMissile()

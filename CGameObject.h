@@ -25,15 +25,15 @@ class CGameObject
       void hit();
 
       int get_lives() { return _lives; }
-
       void set_lives(int lives) { _lives = lives; }
 
       void set_pos(cv::Point2f pos) { _position = pos; }
-
       cv::Point2f get_pos() { return _position; }
 
-      void set_accel(cv::Point2f pos) { _acceleration = pos; }
+      void set_vel(cv::Point2f vel) { _velocity = vel; }
+      cv::Point2f get_vel() { return _velocity; }
 
+      void set_accel(cv::Point2f accel) { _acceleration = accel; }
       cv::Point2f get_accel() { return _acceleration; }
 
       void draw(cv::Mat& im);

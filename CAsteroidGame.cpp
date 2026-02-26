@@ -43,6 +43,7 @@ double CAsteroidGame::gpio(int type, int channel)
 
 bool CAsteroidGame::update()
     {
+    // move asteroids
     for (auto& a : _asteroid_list)
         a.move();
 
@@ -63,33 +64,71 @@ bool CAsteroidGame::update()
     // determine speed scale
     if (_joystick_percent.x > SPEED_THRESHOLD ||
         _joystick_percent.x < (100 - SPEED_THRESHOLD))
-        _speed_scale.x = FAST_SPEED_SCALE;
+        _thrust_scale.x = FAST_ACCEL_SCALE;
+    else
+        _thrust_scale.x = SLOW_ACCEL_SCALE;
 
     if (_joystick_percent.y > SPEED_THRESHOLD ||
         _joystick_percent.y < (100 - SPEED_THRESHOLD))
-        _speed_scale.y = FAST_SPEED_SCALE;
+        _thrust_scale.y = FAST_ACCEL_SCALE;
+    else
+        _thrust_scale.x = SLOW_ACCEL_SCALE;
 
     // calculate incrementer in pixel space
-    _incrementer.x = _joystick_movement.x * _speed_scale.x;
-    _incrementer.y = _joystick_movement.y * _speed_scale.y;
+    _incrementer.x = _joystick_movement.x * _thrust_scale.x;
+    _incrementer.y = _joystick_movement.y * _thrust_scale.y;
 
-    // update draw position smoothly (float space)
-    _draw_position = _previous_draw_position + _incrementer;
+    // update ship acceleration
+    ship.set_accel(_incrementer);
 
-    // boundary clamping (accounting for 2x2 draw size)
-    if (_draw_position.x < 0)
-        _draw_position.x = 0;
-    if (_draw_position.x > _canvas.cols - 2)
-        _draw_position.x = _canvas.cols - 2;
+    // move ship
+    ship.move();
 
-    if (_draw_position.y < 0)
-        _draw_position.y = 0;
-    if (_draw_position.y > _canvas.rows - 2)
-        _draw_position.y = _canvas.rows - 2;
+    // set max velocity for ship
+    _ship_velocity = ship.get_vel();
+    if (abs(_ship_velocity.x) > _max_velocity.x)
+        if (_ship_velocity.x > 0)
+            ship.set_vel(cv::Point2f(_max_velocity.x, _ship_velocity.y));
+        else if(_ship_velocity.x < 0)
+            ship.set_vel(cv::Point2f(-_max_velocity.x, _ship_velocity.y));
+    if (abs(_ship_velocity.y) > _max_velocity.y)
+        if (_ship_velocity.y > 0)
+            ship.set_vel(cv::Point2f(_ship_velocity.x, _max_velocity.y));
+        else if (_ship_velocity.y < 0)
+            ship.set_vel(cv::Point2f(_ship_velocity.x, -_max_velocity.y));
 
-    // store for next frame
-    _previous_draw_position = _draw_position;
+    // let ship loop through screen
+    _ship_position = ship.get_pos();
+    if (_ship_position.y - _ship_radius < 0)
+    {
+        ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_position.x, BOARD_SIZE.height - _ship_radius));
+    }
+    if (_ship_position.y + _ship_radius > BOARD_SIZE.height)
+    {
+        ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_position.x, _ship_radius));
+    }
+    if (_ship_position.x - _ship_radius < 0)
+    {
+        ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_radius, BOARD_SIZE.height - _ship_position.y));
+    }
+    if (_ship_position.x + _ship_radius > BOARD_SIZE.width)
+    {
+        ship.set_pos(cv::Point2f(_ship_radius, BOARD_SIZE.height - _ship_position.y));
+    }
 
+    _ship_speed = sqrt(pow(_ship_velocity.x, 2) + pow(_ship_velocity.y, 2));
+    // create missiles 
+    if (_control.get_button(BUTTON2))
+    {
+        _missile_list.emplace_back();
+        _missile_list.at(_missile_list.size() - 1).set_vel(cv::Point2f(_ship_velocity.x / _ship_speed * _missile_speed,
+                                                                       _ship_velocity.y / _ship_speed * _missile_speed));
+        _missile_list.at(_missile_list.size() - 1).set_pos(_ship_position);
+    }
+
+    // move missiles
+    for (auto& m : _missile_list)
+        m.move();
 
     return true;
     }
@@ -100,15 +139,15 @@ bool CAsteroidGame::draw()
     _canvas.setTo(cv::Scalar(0, 0, 0));
 
     // Draw ship
-    //ship.draw(_canvas);
+    ship.draw(_canvas);
 
     // Draw asteroids
     for (auto& a : _asteroid_list)
         a.draw(_canvas);
 
     //// Draw missiles
-    //for (auto& m : _missile_list)
-    //    m.draw(_canvas);
+    for (auto& m : _missile_list)
+        m.draw(_canvas);
 
     cvui::update();
 

@@ -11,6 +11,8 @@
 #define BOARD_SIZE cv::Size(1280, 720)
 #define BOARD_CENTER cv::Point2f(BOARD_SIZE.width / 2, BOARD_SIZE.height / 2)
 #define SPAWN_DELAY 2
+#define SLOW_ACCEL_SCALE 10 ///< Scale for slow acceleration
+#define FAST_ACCEL_SCALE 20 ///< Scale for fast acceleration
 
 class CAsteroidGame : public CBase4618
     {
@@ -18,20 +20,24 @@ class CAsteroidGame : public CBase4618
         std::vector<CAsteroid> _asteroid_list;
         std::chrono::steady_clock::time_point _last_asteroid_spawn;
 
-        // std::vector<CMissile> _missile_list;
+        std::vector<CMissile> _missile_list;
+        float _missile_speed = 800.0;
 
         CShip ship;
+        cv::Point2f _ship_velocity;
+        cv::Point2f _max_velocity{ 500, 500 };
+        float _ship_speed;
+        cv::Point2f _ship_position;
+        int _ship_radius = 10;
 
-        cv::Point2f _joystick_percent = (JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER); ///< Percentage of joystick deflection
+        cv::Point2f _joystick_percent{ JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER }; ///< Percentage of joystick deflection
 
-        cv::Point2f _incrementer = (0.0, 0.0); ///< Increments or decrements the draw position
+        cv::Point2f _incrementer{ 0.0, 0.0 }; ///< Increments or decrements the draw position
 
         cv::Point2f _joystick_movement; ///< Direction and strength that the joystick is being pushed
 
-        cv::Point2f _speed_scale = (SLOW_SPEED_SCALE, SLOW_SPEED_SCALE);
+        cv::Point2f _thrust_scale{ SLOW_ACCEL_SCALE, SLOW_ACCEL_SCALE };
 
-        cv::Point2f _draw_position; ///< Position to draw 
-        cv::Point2f _previous_draw_position; ///< Previous position that was drawn
 
     public: 
        CAsteroidGame(cv::Size size, int comport);
