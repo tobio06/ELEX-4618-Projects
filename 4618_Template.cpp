@@ -383,7 +383,7 @@ void lab4()
 ////////////////////////////////////////////////////////////////
 void lab5()
 {
-   CPong pong(PONG_WINDOW_SIZE, 4);
+   CPong pong(PONG_WINDOW_SIZE, 3);
 
    pong.run();
 }
@@ -393,7 +393,7 @@ void lab5()
 ////////////////////////////////////////////////////////////////
 void lab6()
 {
-    CAsteroidGame asteroid(BOARD_SIZE, 4);
+    CAsteroidGame asteroid(BOARD_SIZE, 3);
 
     asteroid.run();
 }

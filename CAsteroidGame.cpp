@@ -43,9 +43,62 @@ double CAsteroidGame::gpio(int type, int channel)
 
 bool CAsteroidGame::update()
     {
-    // move asteroids
-    for (auto& a : _asteroid_list)
-        a.move();
+   _reset = _control.get_button(BUTTON1);
+
+   ////////////////////////////////
+   // MISSILE - ASTEROID COLLISION
+   for (int asteroid = (int)_asteroid_list.size() - 1; asteroid >= 0; asteroid--)
+      {
+      for (int missile = (int)_missile_list.size() - 1; missile >= 0; missile--)
+         {
+         if (_missile_list.at(missile).collide(_asteroid_list.at(asteroid)))
+            {
+            _asteroid_list.erase(_asteroid_list.begin() + asteroid);
+            _missile_list.erase(_missile_list.begin() + missile);
+            _points += 10;
+            break;
+            }
+         }
+      }
+
+   ////////////////////////////////
+   // MISSILE - WALL COLLISION
+   for (int missile = (int)_missile_list.size() - 1; missile >= 0; missile--)
+      {
+      if (_missile_list.at(missile).collide_wall(BOARD_SIZE))
+         {
+         _missile_list.erase(_missile_list.begin() + missile);
+         break;
+         }
+      }
+
+   ////////////////////////////////
+   // SHIP - ASTEROID COLLISION
+   for (int asteroid = (int)_asteroid_list.size() - 1; asteroid >= 0; asteroid--)
+      {
+      if (_asteroid_list.at(asteroid).collide(_ship))
+         {
+         _ship.set_lives(_ship.get_lives() - 1);
+         _ship.set_pos(BOARD_CENTER);
+         _ship.set_vel(cv::Point2f(0, 0));
+         _ship.set_accel(cv::Point2f(0, 0));
+         _points -= 50;
+         // blink ship red?
+         break;
+         }
+      }
+
+   ////////////////////////////////
+   // SHIP - WALL COLLISION
+      if (_ship.collide_wall(BOARD_SIZE))
+         {
+         _ship.set_lives(_ship.get_lives() - 1);
+         _ship.set_pos(BOARD_CENTER);
+         _ship.set_vel(cv::Point2f(0, 0));
+         _ship.set_accel(cv::Point2f(0, 0));
+         _points -= 50;
+         // blink ship red?
+         }
 
     /////////////////////
     // SHIP CONTROL
@@ -72,63 +125,73 @@ bool CAsteroidGame::update()
         _joystick_percent.y < (100 - SPEED_THRESHOLD))
         _thrust_scale.y = FAST_ACCEL_SCALE;
     else
-        _thrust_scale.x = SLOW_ACCEL_SCALE;
+        _thrust_scale.y = SLOW_ACCEL_SCALE;
 
     // calculate incrementer in pixel space
     _incrementer.x = _joystick_movement.x * _thrust_scale.x;
     _incrementer.y = _joystick_movement.y * _thrust_scale.y;
 
     // update ship acceleration
-    ship.set_accel(_incrementer);
+    _ship.set_accel(_incrementer);
 
     // move ship
-    ship.move();
+    _ship.move();
 
     // set max velocity for ship
-    _ship_velocity = ship.get_vel();
+    _ship_velocity = _ship.get_vel();
     if (abs(_ship_velocity.x) > _max_velocity.x)
         if (_ship_velocity.x > 0)
-            ship.set_vel(cv::Point2f(_max_velocity.x, _ship_velocity.y));
+            _ship.set_vel(cv::Point2f(_max_velocity.x, _ship_velocity.y));
         else if(_ship_velocity.x < 0)
-            ship.set_vel(cv::Point2f(-_max_velocity.x, _ship_velocity.y));
+            _ship.set_vel(cv::Point2f(-_max_velocity.x, _ship_velocity.y));
     if (abs(_ship_velocity.y) > _max_velocity.y)
         if (_ship_velocity.y > 0)
-            ship.set_vel(cv::Point2f(_ship_velocity.x, _max_velocity.y));
+            _ship.set_vel(cv::Point2f(_ship_velocity.x, _max_velocity.y));
         else if (_ship_velocity.y < 0)
-            ship.set_vel(cv::Point2f(_ship_velocity.x, -_max_velocity.y));
+            _ship.set_vel(cv::Point2f(_ship_velocity.x, -_max_velocity.y));
 
-    // let ship loop through screen
-    _ship_position = ship.get_pos();
+    // let ship loop around screen
+    _ship_position = _ship.get_pos();
     if (_ship_position.y - _ship_radius < 0)
     {
-        ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_position.x, BOARD_SIZE.height - _ship_radius));
+        _ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_position.x, BOARD_SIZE.height - _ship_radius));
     }
     if (_ship_position.y + _ship_radius > BOARD_SIZE.height)
     {
-        ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_position.x, _ship_radius));
+        _ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_position.x, _ship_radius));
     }
     if (_ship_position.x - _ship_radius < 0)
     {
-        ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_radius, BOARD_SIZE.height - _ship_position.y));
+        _ship.set_pos(cv::Point2f(BOARD_SIZE.width - _ship_radius, BOARD_SIZE.height - _ship_position.y));
     }
     if (_ship_position.x + _ship_radius > BOARD_SIZE.width)
     {
-        ship.set_pos(cv::Point2f(_ship_radius, BOARD_SIZE.height - _ship_position.y));
+        _ship.set_pos(cv::Point2f(_ship_radius, BOARD_SIZE.height - _ship_position.y));
     }
 
+    //////////////////////////
+    //MISSILE IMPLEMENTATION
     _ship_speed = sqrt(pow(_ship_velocity.x, 2) + pow(_ship_velocity.y, 2));
     // create missiles 
     if (_control.get_button(BUTTON2))
     {
+       if(_ship_speed > 0.01f)
         _missile_list.emplace_back();
         _missile_list.at(_missile_list.size() - 1).set_vel(cv::Point2f(_ship_velocity.x / _ship_speed * _missile_speed,
                                                                        _ship_velocity.y / _ship_speed * _missile_speed));
         _missile_list.at(_missile_list.size() - 1).set_pos(_ship_position);
+        std::cout << "Pew!\n";
     }
 
     // move missiles
     for (auto& m : _missile_list)
         m.move();
+
+    //////////////////////////
+    //ASTEROID IMPLEMENTATION
+    // move asteroids
+    for (auto& a : _asteroid_list)
+       a.move();
 
     return true;
     }
@@ -138,16 +201,42 @@ bool CAsteroidGame::draw()
     // reset every frame
     _canvas.setTo(cv::Scalar(0, 0, 0));
 
+    if (_reset)
+       {
+       _reset = false;
+       std::cout << "GAME RESET\n";
+       _canvas.setTo(cv::Scalar(0, 0, 0));
+       _ship.set_lives(10);
+       _ship.set_pos(BOARD_CENTER);
+       _ship.set_vel(cv::Point2f(0, 0));
+       _ship.set_accel(cv::Point2f(0, 0));
+       _points = 0;
+       _missile_list.clear();
+       _asteroid_list.clear();
+       }
+
     // Draw ship
-    ship.draw(_canvas);
+    _ship.draw(_canvas);
 
     // Draw asteroids
     for (auto& a : _asteroid_list)
         a.draw(_canvas);
 
-    //// Draw missiles
+    // Draw missiles
     for (auto& m : _missile_list)
         m.draw(_canvas);
+
+    // score display
+    cv::Point gui_position(50, 10);
+    cvui::text(_canvas, gui_position.x, gui_position.y, "Points: " + std::to_string(_points));
+
+    // lives display
+    gui_position += cv::Point(100, 0);
+    cvui::text(_canvas, gui_position.x, gui_position.y, "Lives: " + std::to_string(_ship.get_lives()));
+
+    // missile count display
+    gui_position += cv::Point(100, 0);
+    cvui::text(_canvas, gui_position.x, gui_position.y, "Missiles Active: " + std::to_string(_missile_list.size()));
 
     cvui::update();
 

@@ -21,7 +21,7 @@ void CGameObject::move()
 
 bool CGameObject::collide(CGameObject& obj)
    {
-    cv::Point2f distance_component = (_position.x - obj._position.x, _position.y - obj._position.y);
+   cv::Point2f distance_component = _position - obj._position;
 
     float distance = sqrt(pow(distance_component.x, 2) + pow(distance_component.y, 2));
 
@@ -49,6 +49,8 @@ bool CGameObject::collide_wall(cv::Size board)
       {
       return true;
       }
+
+   return false;
    }
 
 void CGameObject::hit()

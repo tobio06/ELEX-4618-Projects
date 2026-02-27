@@ -23,7 +23,7 @@ class CAsteroidGame : public CBase4618
         std::vector<CMissile> _missile_list;
         float _missile_speed = 800.0;
 
-        CShip ship;
+        CShip _ship;
         cv::Point2f _ship_velocity;
         cv::Point2f _max_velocity{ 500, 500 };
         float _ship_speed;
@@ -31,13 +31,14 @@ class CAsteroidGame : public CBase4618
         int _ship_radius = 10;
 
         cv::Point2f _joystick_percent{ JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER }; ///< Percentage of joystick deflection
-
         cv::Point2f _incrementer{ 0.0, 0.0 }; ///< Increments or decrements the draw position
-
         cv::Point2f _joystick_movement; ///< Direction and strength that the joystick is being pushed
 
         cv::Point2f _thrust_scale{ SLOW_ACCEL_SCALE, SLOW_ACCEL_SCALE };
 
+        int _points = 0;
+
+        bool _reset = false;
 
     public: 
        CAsteroidGame(cv::Size size, int comport);
