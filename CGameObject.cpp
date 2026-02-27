@@ -58,8 +58,8 @@ void CGameObject::hit()
 
    }
 
-void CGameObject::draw(cv::Mat& im)
+void CGameObject::draw(cv::Mat& im, cv::Scalar colour)
    {
-   cv::circle(im, _position, _radius, cv::Scalar(255, 255, 255), -1);
+   cv::circle(im, _position, _radius, colour, -1);
    }
    

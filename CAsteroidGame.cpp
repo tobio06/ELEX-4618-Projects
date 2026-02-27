@@ -12,6 +12,8 @@ CAsteroidGame::CAsteroidGame(cv::Size canvas_size, int comport)
     _canvas = cv::Mat::zeros(canvas_size, CV_8UC3);
 
     _last_asteroid_spawn = std::chrono::steady_clock::now();
+
+    _last_time_hit = std::chrono::steady_clock::now();
    }
 
 CAsteroidGame::~CAsteroidGame()
@@ -44,6 +46,12 @@ double CAsteroidGame::gpio(int type, int channel)
 bool CAsteroidGame::update()
     {
    _reset = _control.get_button(BUTTON1);
+
+   // check if game is over
+   if (_ship.get_lives() <= 0)
+   {
+       _game_over = true;
+   }
 
    ////////////////////////////////
    // MISSILE - ASTEROID COLLISION
@@ -78,15 +86,32 @@ bool CAsteroidGame::update()
       {
       if (_asteroid_list.at(asteroid).collide(_ship))
          {
-         _ship.set_lives(_ship.get_lives() - 1);
-         _ship.set_pos(BOARD_CENTER);
-         _ship.set_vel(cv::Point2f(0, 0));
-         _ship.set_accel(cv::Point2f(0, 0));
-         _points -= 50;
-         // blink ship red?
-         break;
+          if (!_ship_hit)
+          {
+              _ship_hit = true;
+              _ship.set_lives(_ship.get_lives() - 1);
+              _ship.set_pos(BOARD_CENTER);
+              _ship.set_vel(cv::Point2f(0, 0));
+              _ship.set_accel(cv::Point2f(0, 0));
+              _points -= 50;
+              break;
+          }
          }
       }
+
+   // give ship invunerability after being hit for a short time
+   if (_ship_hit)
+   {
+       auto now = std::chrono::steady_clock::now();
+       float time_elapsed = std::chrono::duration<float>(now - _last_time_hit).count();
+       _ship_colour = YELLOW;
+       if (time_elapsed >= _invunerability_time)
+       {
+           _last_time_hit = now;
+           _ship_hit = false;
+           _ship_colour = WHITE;
+       }
+   }
 
     /////////////////////
     // SHIP CONTROL
@@ -163,12 +188,14 @@ bool CAsteroidGame::update()
     // create missiles 
     if (_control.get_button(BUTTON2))
     {
-       if(_ship_speed > 0.01f)
-        _missile_list.emplace_back();
-        _missile_list.at(_missile_list.size() - 1).set_vel(cv::Point2f(_ship_velocity.x / _ship_speed * _missile_speed,
-                                                                       _ship_velocity.y / _ship_speed * _missile_speed));
-        _missile_list.at(_missile_list.size() - 1).set_pos(_ship_position);
-        std::cout << "Pew!\n";
+        if (_ship_speed > 0.01f)
+        {
+            _missile_list.emplace_back();
+            _missile_list.at(_missile_list.size() - 1).set_vel(cv::Point2f(_ship_velocity.x / _ship_speed * _missile_speed,
+                _ship_velocity.y / _ship_speed * _missile_speed));
+            _missile_list.at(_missile_list.size() - 1).set_pos(_ship_position);
+            std::cout << "Pew!\n";
+        }
     }
 
     // move missiles
@@ -186,49 +213,56 @@ bool CAsteroidGame::update()
 
 bool CAsteroidGame::draw()
     {
-    // reset every frame
-    _canvas.setTo(cv::Scalar(0, 0, 0));
-
     if (_reset)
-       {
-       _reset = false;
-       std::cout << "GAME RESET\n";
-       _canvas.setTo(cv::Scalar(0, 0, 0));
-       _ship.set_lives(10);
-       _ship.set_pos(BOARD_CENTER);
-       _ship.set_vel(cv::Point2f(0, 0));
-       _ship.set_accel(cv::Point2f(0, 0));
-       _points = 0;
-       _missile_list.clear();
-       _asteroid_list.clear();
-       }
+    {
+        _reset = false;
+        _game_over = false;
+        std::cout << "GAME RESET\n";
+        _canvas.setTo(cv::Scalar(0, 0, 0));
+        _ship.set_lives(10);
+        _ship.set_pos(BOARD_CENTER);
+        _ship.set_vel(cv::Point2f(0, 0));
+        _ship.set_accel(cv::Point2f(0, 0));
+        _points = 0;
+        _missile_list.clear();
+        _asteroid_list.clear();
+    }
+    else if (_game_over)
+    {
+        cv::putText(_canvas, "GAME OVER", cv::Point(BOARD_CENTER.x - 400, BOARD_CENTER.y), cv::FONT_HERSHEY_DUPLEX, 4, cv::Scalar(0, 0, 200), 11);
+    }
+    else
+    {
+        // reset every frame
+        _canvas.setTo(cv::Scalar(0, 0, 0));
 
-    // Draw ship
-    _ship.draw(_canvas);
+        // Draw ship
+        _ship.draw(_canvas, _ship_colour);
 
-    // Draw asteroids
-    for (auto& a : _asteroid_list)
-        a.draw(_canvas);
+        // Draw asteroids
+        for (auto& a : _asteroid_list)
+            a.draw(_canvas, WHITE);
 
-    // Draw missiles
-    for (auto& m : _missile_list)
-        m.draw(_canvas);
+        // Draw missiles
+        for (auto& m : _missile_list)
+            m.draw(_canvas, RED);
 
-    // score display
-    cv::Point gui_position(50, 10);
-    cvui::text(_canvas, gui_position.x, gui_position.y, "Points: " + std::to_string(_points));
+        // score display
+        cv::Point gui_position(50, 10);
+        cvui::text(_canvas, gui_position.x, gui_position.y, "Points: " + std::to_string(_points));
 
-    // lives display
-    gui_position += cv::Point(100, 0);
-    cvui::text(_canvas, gui_position.x, gui_position.y, "Lives: " + std::to_string(_ship.get_lives()));
+        // lives display
+        gui_position += cv::Point(100, 0);
+        cvui::text(_canvas, gui_position.x, gui_position.y, "Lives: " + std::to_string(_ship.get_lives()));
 
-    // missile count display
-    gui_position += cv::Point(100, 0);
-    cvui::text(_canvas, gui_position.x, gui_position.y, "Missiles Active: " + std::to_string(_missile_list.size()));
+        // missile count display
+        gui_position += cv::Point(100, 0);
+        cvui::text(_canvas, gui_position.x, gui_position.y, "Missiles Active: " + std::to_string(_missile_list.size()));
+    }
 
-    cvui::update();
+        cvui::update();
 
-    cv::imshow(CANVAS_NAME, _canvas);
+        cv::imshow(CANVAS_NAME, _canvas);
 
     return true;
     }

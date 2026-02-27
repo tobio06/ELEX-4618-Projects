@@ -108,6 +108,6 @@ class CGameObject
       * 
       * @return Returns nothing
       */
-      void draw(cv::Mat& im);
+      void draw(cv::Mat& im, cv::Scalar colour);
    };
 

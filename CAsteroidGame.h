@@ -28,7 +28,7 @@ class CAsteroidGame : public CBase4618
     {
     protected:
         std::vector<CAsteroid> _asteroid_list; ///< vector of asteroids
-        std::chrono::steady_clock::time_point _last_asteroid_spawn;  ///< last time an asteroid spawned
+        std::chrono::steady_clock::time_point _last_asteroid_spawn; ///< last time an asteroid spawned
 
         std::vector<CMissile> _missile_list; ///< vector of missiles
         float _missile_speed = 800.0; ///< speed of missiles
@@ -39,6 +39,11 @@ class CAsteroidGame : public CBase4618
         float _ship_speed; ///< speed of ship, used to get unit vector of velocity
         cv::Point2f _ship_position; ///< position of ship
         int _ship_radius = 10; ///< radius of ship
+        bool _ship_hit = false; ///< status if ship has been hit
+        cv::Scalar _ship_colour = WHITE; ///< colour of ship
+
+        std::chrono::steady_clock::time_point _last_time_hit; ///< last time ship was hit
+        float _invunerability_time = 3.0f; ///< let ship be temporarily invunerable after being hit
 
         cv::Point2f _joystick_percent{ JOYSTICK_X_CENTER, JOYSTICK_Y_CENTER }; ///< Percentage of joystick deflection
         cv::Point2f _incrementer{ 0.0, 0.0 }; ///< Increments or decrements the draw position
@@ -49,6 +54,7 @@ class CAsteroidGame : public CBase4618
         int _points = 0; ///< points of player
 
         bool _reset = false; ///< reset game
+        bool _game_over = false; ///< game over
 
     public: 
        CAsteroidGame(cv::Size size, int comport);
