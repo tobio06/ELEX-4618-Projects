@@ -88,18 +88,6 @@ bool CAsteroidGame::update()
          }
       }
 
-   ////////////////////////////////
-   // SHIP - WALL COLLISION
-      if (_ship.collide_wall(BOARD_SIZE))
-         {
-         _ship.set_lives(_ship.get_lives() - 1);
-         _ship.set_pos(BOARD_CENTER);
-         _ship.set_vel(cv::Point2f(0, 0));
-         _ship.set_accel(cv::Point2f(0, 0));
-         _points -= 50;
-         // blink ship red?
-         }
-
     /////////////////////
     // SHIP CONTROL
     _joystick_percent = cv::Point2f(gpio(ANALOG, JOYSTICK_X), gpio(ANALOG, JOYSTICK_Y));

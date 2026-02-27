@@ -7,9 +7,9 @@ CAsteroid::CAsteroid()
 
     _acceleration = cv::Point2f(0.0, 0.0);
 
-	_radius = ((rand() % 50) + 20);
+	_radius = ((rand() % 50) + 30);
 
-    _fast_speed = rand() % 200 + 50;
+    _fast_speed = rand() % 250 + 50;
     _slow_speed = rand() % 10 + 50;
 
 	_spawn_side = rand() % 4;
