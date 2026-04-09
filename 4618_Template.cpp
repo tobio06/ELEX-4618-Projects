@@ -26,6 +26,7 @@
 #include "CSketch.h"
 #include "CPong.h"
 #include "CAsteroidGame.h"
+#include "CLab9Client.h"
 
 // Must include Windows.h after Winsock2.h, so Serial must be included after Client/Server
 #include "Serial.h" 
@@ -398,6 +399,16 @@ void lab6()
     asteroid.run();
 }
 
+////////////////////////////////////////////////////////////////
+// Lab 9
+////////////////////////////////////////////////////////////////
+void lab9()
+   {
+   CLab9Client lab9client(IP_ADDRESS, PORT);
+
+   lab9client.run();
+   }
+
 void print_menu()
 {
 	std::cout << "\n***********************************";
@@ -437,6 +448,7 @@ int main(int argc, char* argv[])
     case 4: lab4(); break;
     case 5: lab5(); break;
     case 6: lab6(); break;
+    case 9: lab9(); break;
     case 10: test_com(); break;
 		case 11: do_image(); break;
 		case 12: do_video(); break;

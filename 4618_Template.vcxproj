@@ -93,6 +93,8 @@
     <ClInclude Include="CAsteroidGame.h" />
     <ClInclude Include="CBase4618.h" />
     <ClInclude Include="CGameObject.h" />
+    <ClInclude Include="CLab9Client.h" />
+    <ClInclude Include="Client.h" />
     <ClInclude Include="CMissile.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="CPong.h" />
@@ -110,6 +112,8 @@
     <ClCompile Include="CAsteroidGame.cpp" />
     <ClCompile Include="CBase4618.cpp" />
     <ClCompile Include="CGameObject.cpp" />
+    <ClCompile Include="CLab9Client.cpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="CMissile.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="CPong.cpp" />

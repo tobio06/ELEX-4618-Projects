@@ -37,6 +37,12 @@
     <ClCompile Include="Lab3Functions.cpp">
       <Filter>Lab3 Control</Filter>
     </ClCompile>
+    <ClCompile Include="CLab9Client.cpp">
+      <Filter>Lab 9 Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Lab 9 Socket</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CBase4618.h" />
@@ -77,6 +83,12 @@
     <ClInclude Include="Lab3Functions.h">
       <Filter>Lab3 Control</Filter>
     </ClInclude>
+    <ClInclude Include="CLab9Client.h">
+      <Filter>Lab 9 Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Lab 9 Socket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Background Files">
@@ -93,6 +105,9 @@
     </Filter>
     <Filter Include="Lab3 Control">
       <UniqueIdentifier>{3adc67b8-1025-4ae1-9210-52306094b5c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lab 9 Socket">
+      <UniqueIdentifier>{3d93638c-1764-497a-945c-65a74f814482}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
