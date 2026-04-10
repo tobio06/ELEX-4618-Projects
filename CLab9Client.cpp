@@ -69,22 +69,22 @@ void CLab9Client::get_bin_counts()
    _client.tx_str("G 1 0\n");
    if (_client.rx_str(response))
       {
-      std::cout << "\nBin 1 Count: " << response;
+      std::cout << "\nRED Bin Count: " << response;
       }
    _client.tx_str("G 1 1\n");
    if (_client.rx_str(response))
       {
-      std::cout << "\nBin 2 Count: " << response;
+      std::cout << "\nBLUE Bin Count: " << response;
       }
    _client.tx_str("G 1 2\n");
    if (_client.rx_str(response))
       {
-      std::cout << "\nBin 3 Count: " << response;
+      std::cout << "\nGREEN Bin Count: " << response;
       }
    _client.tx_str("G 1 3\n");
    if (_client.rx_str(response))
       {
-      std::cout << "\nBin 4 Count: " << response;
+      std::cout << "\nPURPLE Bin Count: " << response;
       }
    else
       {
@@ -95,17 +95,25 @@ void CLab9Client::get_bin_counts()
 
 void CLab9Client::get_image()
    {
+    std::cout << "\nNow streaming... Press q to stop stream.";
    while (true)
       {
          _client.tx_str("im");
 
-         cv::Mat image;
-         if (_client.rx_im(image))
+         cv::Mat im;
+         if (_client.rx_im(im))
          {
-            cv::imshow("Live", image);
-            cv::waitKey(1);
+             if (!im.empty())
+            cv::imshow("Live Stream", im);
+         }
+
+         int key = cv::waitKey(100);
+         if (key == 'q' || key == 'Q')
+         {
+             break;
          }
       }
+   cv::destroyWindow("Live Stream");
    }
 
 
